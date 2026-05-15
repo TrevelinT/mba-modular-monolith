@@ -1,0 +1,39 @@
+{
+  "name": "@repo/product",
+  "version": "0.0.0",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+ "exports": {
+    "./styles.css": "./dist/index.css",
+    "./*": "./dist/*.js",
+    ".": "./dist/index.js",
+    "./components*": "./dist/components/index.js"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build:styles": "npx @tailwindcss/cli -i ./styles.css -o ./dist/index.css",
+    "build:components": "tsc",
+    "dev:styles": "npx @tailwindcss/cli -i ./styles.css -o ./dist/index.css --watch",
+    "dev:components": "tsc --watch",
+    "lint": "eslint \"**/*.ts\""
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@repo/tailwind-config": "*",
+    "tailwindcss": "^4.3.0",
+    "@tailwindcss/cli": "^4.3.0",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  }
+}
