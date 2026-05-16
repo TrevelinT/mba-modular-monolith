@@ -9,9 +9,12 @@ function BuyBox({}: BuyBoxProps) {
             <span className="font-price-lg text-price-lg text-on-surface">
               $499.99
             </span>
-            <span className="text-body-md text-secondary line-through">
+            <s
+              aria-label="Original price $549.99"
+              className="text-body-md text-secondary"
+            >
               $549.99
-            </span>
+            </s>
           </div>
           <p className="text-label-md text-secondary">
             Tax included. Shipping calculated at checkout.
@@ -21,26 +24,56 @@ function BuyBox({}: BuyBoxProps) {
           </p>
         </div>
         <div className="flex flex-col gap-sm">
-          <h3 className="font-label-md text-on-surface uppercase tracking-wider">
+          <label
+            className="font-label-md text-on-surface uppercase tracking-wider"
+            htmlFor="quantity"
+          >
             Quantity
-          </h3>
-          <div className="flex items-center w-full max-w-[140px] border border-outline-variant rounded">
-            <button className="p-2 hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined">remove</span>
+          </label>
+          <div
+            className="flex items-center w-full max-w-[140px] border border-outline-variant rounded"
+            id="quantity"
+          >
+            <button
+              aria-label="Decrease quantity"
+              className="p-2 hover:bg-surface-container transition-colors"
+              type="button"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined">
+                remove
+              </span>
             </button>
-            <span className="flex-1 text-center font-bold">1</span>
-            <button className="p-2 hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined">add</span>
+            <span
+              aria-live="polite"
+              className="flex-1 text-center font-bold"
+              role="status"
+            >
+              1
+            </span>
+            <button
+              aria-label="Increase quantity"
+              className="p-2 hover:bg-surface-container transition-colors"
+              type="button"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined">
+                add
+              </span>
             </button>
           </div>
         </div>
         <div className="flex flex-col gap-md pt-base">
-          <button className="w-full bg-primary-container hover:bg-primary py-lg rounded text-on-primary font-headline-md transition-all active:opacity-80">
+          <button
+            className="w-full bg-primary-container hover:bg-primary py-lg rounded text-on-primary font-headline-md transition-all active:opacity-80"
+            type="button"
+          >
             Pre-order Now
           </button>
         </div>
         <div className="flex items-center gap-sm text-body-sm font-medium text-on-surface pt-sm">
-          <span className="material-symbols-outlined text-surface-tint">
+          <span
+            aria-hidden="true"
+            className="material-symbols-outlined text-surface-tint"
+          >
             check_circle
           </span>
           Free Shipping &amp; Express Delivery
@@ -48,7 +81,10 @@ function BuyBox({}: BuyBoxProps) {
       </div>
       <div className="grid grid-cols-3 gap-sm">
         <div className="flex flex-col items-center text-center gap-xs">
-          <span className="material-symbols-outlined text-secondary text-[24px]">
+          <span
+            aria-hidden="true"
+            className="material-symbols-outlined text-secondary text-[24px]"
+          >
             local_shipping
           </span>
           <span className="text-[9px] font-bold uppercase text-secondary">
@@ -56,7 +92,10 @@ function BuyBox({}: BuyBoxProps) {
           </span>
         </div>
         <div className="flex flex-col items-center text-center gap-xs">
-          <span className="material-symbols-outlined text-secondary text-[24px]">
+          <span
+            aria-hidden="true"
+            className="material-symbols-outlined text-secondary text-[24px]"
+          >
             verified_user
           </span>
           <span className="text-[9px] font-bold uppercase text-secondary">
@@ -64,7 +103,10 @@ function BuyBox({}: BuyBoxProps) {
           </span>
         </div>
         <div className="flex flex-col items-center text-center gap-xs">
-          <span className="material-symbols-outlined text-secondary text-[24px]">
+          <span
+            aria-hidden="true"
+            className="material-symbols-outlined text-secondary text-[24px]"
+          >
             sync
           </span>
           <span className="text-[9px] font-bold uppercase text-secondary">

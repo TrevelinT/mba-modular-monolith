@@ -1,18 +1,36 @@
 function Cart() {
   return (
     <div className="relative group">
-      <button className="p-2 hover:bg-surface-container rounded-full transition-colors relative">
-        <span className="material-symbols-outlined text-on-surface">
+      <button
+        aria-controls="cart-panel"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-label="Shopping cart, 1 item"
+        className="p-2 hover:bg-surface-container rounded-full transition-colors relative"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          className="material-symbols-outlined text-on-surface"
+        >
           shopping_cart
         </span>
-        <span className="absolute top-1 right-1 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+        <span
+          aria-hidden="true"
+          className="absolute top-1 right-1 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full"
+        >
           1
         </span>
       </button>
-      <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-outline-variant rounded-xl shadow-2xl z-50 p-4 transition-all duration-200">
+      <div
+        className="absolute right-0 top-full mt-2 w-80 bg-surface border border-outline-variant rounded-xl shadow-2xl z-50 p-4 transition-all duration-200"
+        id="cart-panel"
+        role="region"
+        aria-label="Cart preview"
+      >
         <div className="flex justify-between items-center mb-4">
-          <h4 className="font-headline-md text-on-surface">Your Cart</h4>
-          <span className="text-body-sm text-secondary">1 Item</span>
+          <h2 className="font-headline-md text-on-surface m-0">Your Cart</h2>
+          <p className="text-body-sm text-secondary">1 Item</p>
         </div>
         <div className="flex gap-4 mb-6">
           <div className="w-20 h-20 bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant shrink-0">
@@ -37,10 +55,16 @@ function Cart() {
             <span className="text-body-md text-on-surface">Subtotal</span>
             <span className="font-price-lg text-headline-md">$499.99</span>
           </div>
-          <button className="w-full bg-primary-container text-on-primary py-3 rounded font-bold text-body-md hover:bg-primary transition-colors">
+          <button
+            className="w-full bg-primary-container text-on-primary py-3 rounded font-bold text-body-md hover:bg-primary transition-colors"
+            type="button"
+          >
             Checkout
           </button>
-          <button className="w-full text-secondary hover:text-on-surface py-1 text-body-sm transition-colors text-center font-medium">
+          <button
+            className="w-full text-secondary hover:text-on-surface py-1 text-body-sm transition-colors text-center font-medium"
+            type="button"
+          >
             View Cart
           </button>
         </div>
