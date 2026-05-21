@@ -5,7 +5,7 @@ function Footer() {
         <p className="font-headline-md text-headline-md font-bold text-on-secondary-container dark:text-on-secondary-fixed m-0">
           Game Store
         </p>
-        <small className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim m-0">
+        <small className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim m-0">
           © 2024 Game Store Inc. All rights reserved.
         </small>
       </div>
@@ -13,7 +13,7 @@ function Footer() {
         <ul className="flex flex-wrap justify-center gap-md list-none m-0 p-0">
           <li>
             <a
-              className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+              className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
               href="#"
             >
               Privacy Policy
@@ -21,7 +21,7 @@ function Footer() {
           </li>
           <li>
             <a
-              className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+              className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
               href="#"
             >
               Terms of Service
@@ -29,7 +29,7 @@ function Footer() {
           </li>
           <li>
             <a
-              className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+              className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
               href="#"
             >
               Shipping Info
@@ -37,7 +37,7 @@ function Footer() {
           </li>
           <li>
             <a
-              className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+              className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
               href="#"
             >
               Returns
@@ -45,7 +45,7 @@ function Footer() {
           </li>
           <li>
             <a
-              className="font-Inter text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+              className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
               href="#"
             >
               Contact Us

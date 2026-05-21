@@ -1,4 +1,3 @@
-import "./App.css";
 import { BuyBox } from "@repo/buy-box/components/buy-box";
 import { Breadcrumb } from "./Breadcrumb/Breadcrumb";
 import { Footer } from "./Footer";

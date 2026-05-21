@@ -3,3 +3,5 @@ node_modules
 .turbo
 *.log
 dist
+skills-lock.json
+.agents/
