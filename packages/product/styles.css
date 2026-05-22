@@ -1,3 +1,4 @@
 /* Component-level styles for the UI package */
-@import "@repo/tailwind-config";
+@reference "@repo/tailwind-config";
+@import "tailwindcss/utilities.css" layer(utilities);
 @source "./components/**/*.{tsx,ts}";
