@@ -24,11 +24,11 @@
   },
   "license": "MIT",
   "scripts": {
-    "build:styles": "npx @tailwindcss/cli -i ./styles.css -o ./dist/index.css",
+    "build:styles": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/index.css",
     "build:components": "tsc",
-    "dev:styles": "npx @tailwindcss/cli -i ./styles.css -o ./dist/index.css --watch",
+    "dev:styles": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/index.css --watch",
     "dev:components": "tsc --watch",
-    "lint": "eslint \"**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
     "react": "^18.2.0",
