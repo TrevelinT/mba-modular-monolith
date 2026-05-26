@@ -20,8 +20,7 @@ This Turborepo includes the following packages and apps:
 - `@repo/cart`: a feature package used by `web` application
 - `@repo/buy-box`: a feature package used by `web` application
 - `@repo/product`: a feature package used by `web` application
-- `@repo/tailwind-config`: shared `tailwind` configurations
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `@repo/config`: shared TypeScript presets and Tailwind theme tokens
 
 Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
 

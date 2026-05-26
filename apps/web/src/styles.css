@@ -1,4 +1,4 @@
-@import "@repo/tailwind-config";
+@import "@repo/config/tailwind";
 @import "@repo/cart/styles.css";
 @import "@repo/product/styles.css";
 @import "@repo/buy-box/styles.css";

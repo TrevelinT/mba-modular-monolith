@@ -1,0 +1,17 @@
+{
+	"name": "@repo/config",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
+	"exports": {
+		"./tailwind": "./tailwind/shared-styles.css",
+		"./typescript/*": "./typescript/*"
+	},
+	"devDependencies": {
+		"tailwindcss": "^4.3.0"
+	}
+}

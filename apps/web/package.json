@@ -16,8 +16,7 @@
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
-		"@repo/typescript-config": "*",
-		"@repo/tailwind-config": "*",
+		"@repo/config": "*",
 		"@tailwindcss/vite": "^4.3.0",
 		"@types/react": "^19.0.1",
 		"@types/react-dom": "^19.0.2",
