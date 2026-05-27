@@ -4,7 +4,8 @@
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"format-and-lint": "biome check .",
-		"format-and-lint:fix": "biome check . --write"
+		"format-and-lint:fix": "biome check . --write",
+		"type-check": "turbo run type-check"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.15",

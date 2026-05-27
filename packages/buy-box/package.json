@@ -26,6 +26,7 @@
 	"scripts": {
 		"build:styles": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/index.css",
 		"build:components": "tsc",
+		"type-check": "tsc --noEmit",
 		"dev:styles": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/index.css --watch",
 		"dev:components": "tsc --watch"
 	},

@@ -30,3 +30,13 @@ This Turborepo has some additional tools already setup for you:
 
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [Biome](https://biomejs.dev/) for code linting and formatting
+
+#### Type-check
+
+```sh
+npm run type-check
+```
+
+Runs `tsc --noEmit` across the monorepo via Turbo.
+
+Note: `web` resolves workspace package types from `dist/*.d.ts`, so on a clean checkout you may need to run `npm run build` first.
