@@ -1,5 +1,6 @@
 {
 	"extends": "./base.json",
+	"files": ["./vitest-env.d.ts"],
 	"compilerOptions": {
 		"target": "ESNext",
 		"useDefineForClassFields": true,

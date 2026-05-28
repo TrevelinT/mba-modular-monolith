@@ -1,6 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": "./base.json",
+	"files": ["./vitest-env.d.ts"],
 	"compilerOptions": {
 		"jsx": "react-jsx"
 	}
