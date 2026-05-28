@@ -12,6 +12,38 @@
 		"dev": {
 			"cache": false,
 			"persistent": true
+		},
+		"test": {
+			"dependsOn": ["^test"],
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				"$TURBO_ROOT$/vitest.config.ts",
+				"$TURBO_ROOT$/vitest.setup.ts"
+			],
+			"outputs": ["coverage/**"]
+		},
+		"test:watch": {
+			"cache": false,
+			"persistent": true
+		},
+		"//#merge-coverage": {
+			"dependsOn": [
+				"@repo/cart#test",
+				"@repo/buy-box#test",
+				"@repo/product#test",
+				"web#test"
+			],
+			"inputs": [
+				"apps/*/coverage/**",
+				"packages/*/coverage/**",
+				"$TURBO_ROOT$/scripts/merge-coverage.mjs"
+			],
+			"outputs": ["coverage/merged/**", "coverage/raw/**"]
+		},
+		"//#report-coverage": {
+			"dependsOn": ["//#merge-coverage"],
+			"inputs": ["coverage/merged/**"],
+			"outputs": ["coverage/report/**"]
 		}
 	}
 }

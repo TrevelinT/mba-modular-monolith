@@ -28,7 +28,9 @@
 		"build:components": "tsc",
 		"type-check": "tsc --noEmit",
 		"dev:styles": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/index.css --watch",
-		"dev:components": "tsc --watch"
+		"dev:components": "tsc --watch",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"react": "19.2.6",
