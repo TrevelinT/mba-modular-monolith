@@ -18,7 +18,9 @@ mkdirSync(rawDir, { recursive: true });
 for (const workspace of workspaces) {
 	const source = path.join(workspace, "coverage/coverage-final.json");
 	if (!existsSync(source)) {
-		throw new Error(`Missing coverage report: ${source}. Run "npm run test" first.`);
+		throw new Error(
+			`Missing coverage report: ${source}. Run "npm run test" first.`,
+		);
 	}
 
 	const name = workspace.replace(/\//g, "-");

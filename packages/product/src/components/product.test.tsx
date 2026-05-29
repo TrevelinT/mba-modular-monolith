@@ -6,7 +6,7 @@ describe("Product", () => {
 	it("renders the product title", () => {
 		render(<Product />);
 		expect(
-			screen.getByText("Nintendo Switch 2 - 8\" OLED Edition"),
+			screen.getByText('Nintendo Switch 2 - 8" OLED Edition'),
 		).toBeInTheDocument();
 	});
 });
