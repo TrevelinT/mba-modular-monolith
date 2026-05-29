@@ -40,3 +40,22 @@ npm run type-check
 Runs `tsc --noEmit` across the monorepo via Turbo.
 
 Note: `web` resolves workspace package types from `dist/*.d.ts`, so on a clean checkout you may need to run `npm run build` first.
+
+## Troubleshooting
+
+### `Cannot find native binding` / `@rolldown/binding-…` during build
+
+**Symptom:** `npm run build` or `vite build` fails in `web` with `Cannot find native binding` or `Cannot find module '@rolldown/binding-…'`.
+
+**Cause:** Vite 8 uses Rolldown, which needs a platform-specific native binding (e.g. `@rolldown/binding-linux-x64-gnu` on Linux/WSL). npm sometimes skips these optional dependencies in workspaces ([npm/cli#4828](https://github.com/npm/cli/issues/4828)).
+
+**Fix:** From the repo root, with Node **24.15.0** (`nvm use` — see [`.nvmrc`](.nvmrc); Rolldown requires `^20.19.0 || >=22.12.0`):
+
+```sh
+rm -rf node_modules
+npm ci
+```
+
+**Verify:** `node_modules/@rolldown/binding-<platform>` exists (e.g. `binding-linux-x64-gnu` on Linux x64).
+
+**If it recurs:** Delete `package-lock.json` as well and run `npm install`. As a durable workaround, add the matching `@rolldown/binding-*` package to root `optionalDependencies` (version synced to Vite's pinned Rolldown).
