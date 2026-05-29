@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Cart } from "./cart";
 
@@ -6,16 +12,24 @@ function createMatchMediaMock(initialCanHover: boolean) {
 	let matches = initialCanHover;
 	const listeners = new Set<(event: MediaQueryListEvent) => void>();
 
-	window.matchMedia = vi.fn().mockImplementation(function mockMediaQuery(query: string) {
+	window.matchMedia = vi.fn().mockImplementation(function mockMediaQuery(
+		query: string,
+	) {
 		return {
 			get matches() {
 				return matches;
 			},
 			media: query,
-			addEventListener(_type: string, handler: (event: MediaQueryListEvent) => void) {
+			addEventListener(
+				_type: string,
+				handler: (event: MediaQueryListEvent) => void,
+			) {
 				listeners.add(handler);
 			},
-			removeEventListener(_type: string, handler: (event: MediaQueryListEvent) => void) {
+			removeEventListener(
+				_type: string,
+				handler: (event: MediaQueryListEvent) => void,
+			) {
 				listeners.delete(handler);
 			},
 		};
@@ -53,18 +67,22 @@ describe("Cart", () => {
 		mockMatchMedia(false);
 		render(<Cart />);
 
-		expect(screen.getByRole("button", { name: "Shopping cart, 1 item" })).toHaveAttribute(
-			"aria-expanded",
-			"false",
+		expect(
+			screen.getByRole("button", { name: "Shopping cart, 1 item" }),
+		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByLabelText("Cart preview")).toHaveAttribute(
+			"aria-hidden",
+			"true",
 		);
-		expect(screen.getByLabelText("Cart preview")).toHaveAttribute("aria-hidden", "true");
 	});
 
 	it("toggles the panel on click in touch mode", () => {
 		mockMatchMedia(false);
 		render(<Cart />);
 
-		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const cartButton = screen.getByRole("button", {
+			name: "Shopping cart, 1 item",
+		});
 		const panel = screen.getByLabelText("Cart preview");
 
 		fireEvent.click(cartButton);
@@ -80,7 +98,9 @@ describe("Cart", () => {
 		mockMatchMedia(false);
 		render(<Cart />);
 
-		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const cartButton = screen.getByRole("button", {
+			name: "Shopping cart, 1 item",
+		});
 		const panel = screen.getByLabelText("Cart preview");
 
 		fireEvent.click(cartButton);
@@ -95,7 +115,9 @@ describe("Cart", () => {
 		mockMatchMedia(true);
 		render(<Cart />);
 
-		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const cartButton = screen.getByRole("button", {
+			name: "Shopping cart, 1 item",
+		});
 		const panel = screen.getByLabelText("Cart preview");
 		const container = cartButton.parentElement;
 
@@ -114,7 +136,9 @@ describe("Cart", () => {
 		mockMatchMedia(true);
 		render(<Cart />);
 
-		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const cartButton = screen.getByRole("button", {
+			name: "Shopping cart, 1 item",
+		});
 		const panel = screen.getByLabelText("Cart preview");
 
 		fireEvent.mouseEnter(cartButton);
@@ -127,7 +151,9 @@ describe("Cart", () => {
 		const { changeDeviceSize } = createMatchMediaMock(true);
 		render(<Cart />);
 
-		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const cartButton = screen.getByRole("button", {
+			name: "Shopping cart, 1 item",
+		});
 		const panel = screen.getByLabelText("Cart preview");
 		const container = cartButton.parentElement as HTMLElement;
 
