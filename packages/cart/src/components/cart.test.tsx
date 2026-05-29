@@ -1,10 +1,175 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Cart } from "./cart";
 
+function createMatchMediaMock(initialCanHover: boolean) {
+	let matches = initialCanHover;
+	const listeners = new Set<(event: MediaQueryListEvent) => void>();
+
+	window.matchMedia = vi.fn().mockImplementation(function mockMediaQuery(query: string) {
+		return {
+			get matches() {
+				return matches;
+			},
+			media: query,
+			addEventListener(_type: string, handler: (event: MediaQueryListEvent) => void) {
+				listeners.add(handler);
+			},
+			removeEventListener(_type: string, handler: (event: MediaQueryListEvent) => void) {
+				listeners.delete(handler);
+			},
+		};
+	});
+
+	function changeDeviceSize(canHover: boolean) {
+		matches = canHover;
+		const event = { matches: canHover } as MediaQueryListEvent;
+
+		for (const listener of listeners) {
+			listener(event);
+		}
+	}
+
+	return { changeDeviceSize };
+}
+
+function mockMatchMedia(canHover: boolean) {
+	createMatchMediaMock(canHover);
+}
+
 describe("Cart", () => {
+	afterEach(() => {
+		cleanup();
+		vi.restoreAllMocks();
+	});
+
 	it("renders the cart heading", () => {
+		mockMatchMedia(false);
 		render(<Cart />);
 		expect(screen.getByText("Your Cart")).toBeInTheDocument();
+	});
+
+	it("starts with the panel closed", () => {
+		mockMatchMedia(false);
+		render(<Cart />);
+
+		expect(screen.getByRole("button", { name: "Shopping cart, 1 item" })).toHaveAttribute(
+			"aria-expanded",
+			"false",
+		);
+		expect(screen.getByLabelText("Cart preview")).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("toggles the panel on click in touch mode", () => {
+		mockMatchMedia(false);
+		render(<Cart />);
+
+		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const panel = screen.getByLabelText("Cart preview");
+
+		fireEvent.click(cartButton);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.click(cartButton);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("closes the panel when clicking outside in touch mode", () => {
+		mockMatchMedia(false);
+		render(<Cart />);
+
+		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const panel = screen.getByLabelText("Cart preview");
+
+		fireEvent.click(cartButton);
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.click(document.body);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("opens and closes the panel on hover in desktop mode", () => {
+		mockMatchMedia(true);
+		render(<Cart />);
+
+		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const panel = screen.getByLabelText("Cart preview");
+		const container = cartButton.parentElement;
+
+		expect(container).not.toBeNull();
+
+		fireEvent.mouseEnter(container as HTMLElement);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.mouseLeave(container as HTMLElement);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("keeps the panel open when hovering from the button to the panel", () => {
+		mockMatchMedia(true);
+		render(<Cart />);
+
+		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const panel = screen.getByLabelText("Cart preview");
+
+		fireEvent.mouseEnter(cartButton);
+		fireEvent.mouseEnter(panel);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+	});
+
+	it("switches interaction mode when device orientation changes the hover media query", () => {
+		const { changeDeviceSize } = createMatchMediaMock(true);
+		render(<Cart />);
+
+		const cartButton = screen.getByRole("button", { name: "Shopping cart, 1 item" });
+		const panel = screen.getByLabelText("Cart preview");
+		const container = cartButton.parentElement as HTMLElement;
+
+		fireEvent.mouseEnter(container);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		act(function rotateToTouchDevice() {
+			changeDeviceSize(false);
+		});
+
+		fireEvent.click(cartButton);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+
+		fireEvent.click(cartButton);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.click(document.body);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+
+		act(function rotateToDesktopDevice() {
+			changeDeviceSize(true);
+		});
+
+		fireEvent.click(cartButton);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
+
+		fireEvent.mouseEnter(container);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.mouseEnter(cartButton);
+		fireEvent.mouseEnter(panel);
+		expect(cartButton).toHaveAttribute("aria-expanded", "true");
+		expect(panel).toHaveAttribute("aria-hidden", "false");
+
+		fireEvent.mouseLeave(container);
+		expect(cartButton).toHaveAttribute("aria-expanded", "false");
+		expect(panel).toHaveAttribute("aria-hidden", "true");
 	});
 });
