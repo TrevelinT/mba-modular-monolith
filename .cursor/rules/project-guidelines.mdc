@@ -1,0 +1,53 @@
+---
+description: Project guidelines
+alwaysApply: true
+---
+
+# Project guidelines
+
+## Node version (nvm)
+
+This project pins Node in [`.nvmrc`](.nvmrc) and `package.json` `engines` (currently **24.15.0**).
+
+Before any Node/npm command (`npm`, `npx`, `node`, `turbo`, etc.), from the repo root:
+
+1. Source nvm, activate the pinned version, then **prepend nvm's Node to `PATH`** (Cursor's agent shell can override `nvm use`):
+
+   ```sh
+   source ~/.nvm/nvm.sh
+   nvm use
+   export PATH="$HOME/.nvm/versions/node/v$(cat .nvmrc)/bin:$PATH"
+   ```
+
+2. Prefer one chained command (example with checks):
+
+   ```sh
+   source ~/.nvm/nvm.sh && nvm use && export PATH="$HOME/.nvm/versions/node/v$(cat .nvmrc)/bin:$PATH" && npm run format-and-lint && npm run test
+   ```
+
+3. If `nvm use` fails because the version is not installed, run `nvm install`, then retry.
+
+Do not assume the system default Node is correct — verify with `node -v` when troubleshooting engine or Vite errors.
+
+## Done means green
+
+Do not treat a coding task as finished until **lint/format** and **all tests** pass at the repo root (after nvm setup above).
+
+### Lint and format
+
+1. Run `npm run format-and-lint` (Biome check).
+2. If it fails, fix manually or run `npm run format-and-lint:fix`, then `npm run format-and-lint` again until it passes.
+3. Do not skip or ignore violations unless the user explicitly asks.
+
+### Tests
+
+1. Run `npm run test` (Turbo runs tests in all workspaces).
+2. Fix failing tests or regressions you introduced; re-run until green.
+3. Do not claim the task is done while tests are failing or were not run.
+
+### When to run
+
+- After substantive code changes, before summarizing completion.
+- For docs-only edits with no behavioral impact, run checks when unsure; otherwise note why they were skipped.
+
+If a command fails, fix the root cause and re-run the full check sequence before finishing.
