@@ -8,7 +8,8 @@ import {
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
 import { resetCartStore } from "../api/cart-store";
-import { Cart } from "./cart";
+import { CATALOG_PRODUCT_ID } from "../api/catalog";
+import { CartContainer } from "./cart-container";
 
 function createMatchMediaMock(initialCanHover: boolean) {
 	let matches = initialCanHover;
@@ -62,13 +63,13 @@ describe("Cart", () => {
 
 	it("renders the cart heading", () => {
 		mockMatchMedia(false);
-		render(<Cart />);
+		render(<CartContainer />);
 		expect(screen.getByText("Your Cart")).toBeInTheDocument();
 	});
 
 	it("starts with the panel closed", () => {
 		mockMatchMedia(false);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		expect(
 			screen.getByRole("button", { name: "Shopping cart, empty" }),
@@ -81,12 +82,12 @@ describe("Cart", () => {
 
 	it("updates badge and line items when add-to-cart event is published", () => {
 		mockMatchMedia(false);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		act(function dispatchAddToCart() {
 			document.dispatchEvent(
 				new CustomEvent(CART_ADD_ITEM_EVENT, {
-					detail: { productId: "nintendo-switch-2", quantity: 2 },
+					detail: { productId: CATALOG_PRODUCT_ID, quantity: 2 },
 				}),
 			);
 		});
@@ -100,7 +101,7 @@ describe("Cart", () => {
 
 	it("toggles the panel on click in touch mode", () => {
 		mockMatchMedia(false);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
 			name: "Shopping cart, empty",
@@ -118,7 +119,7 @@ describe("Cart", () => {
 
 	it("closes the panel when clicking outside in touch mode", () => {
 		mockMatchMedia(false);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
 			name: "Shopping cart, empty",
@@ -135,7 +136,7 @@ describe("Cart", () => {
 
 	it("opens and closes the panel on hover in desktop mode", () => {
 		mockMatchMedia(true);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
 			name: "Shopping cart, empty",
@@ -156,7 +157,7 @@ describe("Cart", () => {
 
 	it("keeps the panel open when hovering from the button to the panel", () => {
 		mockMatchMedia(true);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
 			name: "Shopping cart, empty",
@@ -171,7 +172,7 @@ describe("Cart", () => {
 
 	it("switches interaction mode when device orientation changes the hover media query", () => {
 		const { changeDeviceSize } = createMatchMediaMock(true);
-		render(<Cart />);
+		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
 			name: "Shopping cart, empty",

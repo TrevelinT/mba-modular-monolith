@@ -6,22 +6,27 @@ import {
 	resetCartStore,
 	subscribeToCartStore,
 } from "../api/cart-store";
-import { addToCart, getCartSummary, getCatalogItem } from "../api/catalog";
+import {
+	addToCart,
+	CATALOG_PRODUCT_ID,
+	getCartSummary,
+	getCatalogItem,
+} from "../api/catalog";
 
 describe("catalog", () => {
-	it("returns a catalog item for nintendo-switch-2", () => {
-		const item = getCatalogItem("nintendo-switch-2");
+	it("returns a catalog item for CATALOG_PRODUCT_ID", () => {
+		const item = getCatalogItem(CATALOG_PRODUCT_ID);
 		expect(item).toBeDefined();
 		expect(item?.unitPrice).toBe(499.99);
 	});
 
 	it("addToCart merges lines by productId", () => {
 		const first = addToCart([], {
-			productId: "nintendo-switch-2",
+			productId: CATALOG_PRODUCT_ID,
 			quantity: 1,
 		});
 		const merged = addToCart(first, {
-			productId: "nintendo-switch-2",
+			productId: CATALOG_PRODUCT_ID,
 			quantity: 2,
 		});
 
@@ -39,7 +44,7 @@ describe("catalog", () => {
 
 	it("getCartSummary totals quantity and subtotal", () => {
 		const items = addToCart([], {
-			productId: "nintendo-switch-2",
+			productId: CATALOG_PRODUCT_ID,
 			quantity: 2,
 		});
 		expect(getCartSummary(items)).toEqual({
@@ -60,12 +65,12 @@ describe("cart pub/sub", () => {
 
 		document.dispatchEvent(
 			new CustomEvent(CART_ADD_ITEM_EVENT, {
-				detail: { productId: "nintendo-switch-2", quantity: 1 },
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 1 },
 			}),
 		);
 
 		expect(handler).toHaveBeenCalledWith({
-			productId: "nintendo-switch-2",
+			productId: CATALOG_PRODUCT_ID,
 			quantity: 1,
 		});
 
@@ -79,7 +84,7 @@ describe("cart pub/sub", () => {
 
 		document.dispatchEvent(
 			new CustomEvent(CART_ADD_ITEM_EVENT, {
-				detail: { productId: "nintendo-switch-2", quantity: 1 },
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 1 },
 			}),
 		);
 
@@ -97,7 +102,7 @@ describe("cart pub/sub", () => {
 		);
 		document.dispatchEvent(
 			new CustomEvent(CART_ADD_ITEM_EVENT, {
-				detail: { productId: "nintendo-switch-2", quantity: 0 },
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 0 },
 			}),
 		);
 
@@ -117,7 +122,7 @@ describe("cart store", () => {
 
 		document.dispatchEvent(
 			new CustomEvent(CART_ADD_ITEM_EVENT, {
-				detail: { productId: "nintendo-switch-2", quantity: 2 },
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 2 },
 			}),
 		);
 

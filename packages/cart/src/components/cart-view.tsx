@@ -1,97 +1,41 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { getCartItems, subscribeToCartStore } from "../api/cart-store";
-import { getCartSummary } from "../api/catalog";
+import type { RefObject } from "react";
+import type { CartLineItem } from "../api";
 
-const HOVER_MEDIA_QUERY = "(hover: hover) and (pointer: fine)";
+export interface CartViewProps {
+	containerRef: RefObject<HTMLDivElement | null>;
+	isOpen: boolean;
+	items: CartLineItem[];
+	itemCount: number;
+	subtotal: number;
+	isEmpty: boolean;
+	cartAriaLabel: string;
+	onMouseEnter: () => void;
+	onMouseLeave: () => void;
+	onButtonClick: () => void;
+}
 
 function formatPrice(amount: number): string {
 	return `$${amount.toFixed(2)}`;
 }
 
-function useCanHover() {
-	const [canHover, setCanHover] = useState(false);
-
-	useEffect(function syncCanHoverWithMediaQuery() {
-		const mediaQuery = window.matchMedia(HOVER_MEDIA_QUERY);
-		setCanHover(mediaQuery.matches);
-
-		function handleChange(event: MediaQueryListEvent) {
-			setCanHover(event.matches);
-		}
-
-		mediaQuery.addEventListener("change", handleChange);
-		return function removeCanHoverMediaQueryListener() {
-			mediaQuery.removeEventListener("change", handleChange);
-		};
-	}, []);
-
-	return canHover;
-}
-
-function Cart() {
-	const [isOpen, setIsOpen] = useState(false);
-	const canHover = useCanHover();
-	const containerRef = useRef<HTMLDivElement>(null);
-	const items = useSyncExternalStore(
-		subscribeToCartStore,
-		getCartItems,
-		getCartItems,
-	);
-	const { itemCount, subtotal } = getCartSummary(items);
-	const isEmpty = itemCount === 0;
-
-	const cartAriaLabel = isEmpty
-		? "Shopping cart, empty"
-		: `Shopping cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`;
-
-	useEffect(
-		function closeCartOnOutsideClick() {
-			if (!isOpen || canHover) {
-				return;
-			}
-
-			function handleClickOutside(event: MouseEvent) {
-				if (!containerRef.current?.contains(event.target as Node)) {
-					setIsOpen(false);
-				}
-			}
-
-			document.addEventListener("click", handleClickOutside);
-			return function removeOutsideClickListener() {
-				document.removeEventListener("click", handleClickOutside);
-			};
-		},
-		[isOpen, canHover],
-	);
-
-	function handleMouseEnter() {
-		if (canHover) {
-			setIsOpen(true);
-		}
-	}
-
-	function handleMouseLeave() {
-		if (canHover) {
-			setIsOpen(false);
-		}
-	}
-
-	function handleButtonClick() {
-		if (!canHover) {
-			setIsOpen(toggleOpen);
-		}
-	}
-
-	function toggleOpen(open: boolean) {
-		return !open;
-	}
-
+function CartView({
+	containerRef,
+	isOpen,
+	items,
+	itemCount,
+	subtotal,
+	isEmpty,
+	cartAriaLabel,
+	onMouseEnter,
+	onMouseLeave,
+	onButtonClick,
+}: CartViewProps) {
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: wrapper spans button and panel for hover
 		<div
 			className="relative"
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			ref={containerRef}
 		>
 			<button
@@ -102,7 +46,7 @@ function Cart() {
 				className={`p-2 rounded-full transition-colors relative cursor-pointer ${
 					isOpen ? "bg-surface-container" : "hover:bg-surface-container"
 				}`}
-				onClick={handleButtonClick}
+				onClick={onButtonClick}
 				type="button"
 			>
 				<span
@@ -199,4 +143,4 @@ function Cart() {
 	);
 }
 
-export { Cart };
+export { CartView };

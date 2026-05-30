@@ -1,21 +1,23 @@
 import type { AddToCartCommand } from "./cart-events";
 
-export type CatalogItem = {
+export const CATALOG_PRODUCT_ID = "nintendo-switch-2";
+
+export interface CatalogItem {
 	name: string;
 	imageUrl: string;
 	unitPrice: number;
-};
+}
 
-export type CartLineItem = {
+export interface CartLineItem {
 	productId: string;
 	quantity: number;
 	name: string;
 	imageUrl: string;
 	unitPrice: number;
-};
+}
 
 const catalog: Record<string, CatalogItem> = {
-	"nintendo-switch-2": {
+	[CATALOG_PRODUCT_ID]: {
 		name: 'Nintendo Switch 2 - 8" OLED',
 		imageUrl:
 			"https://lh3.googleusercontent.com/aida-public/AB6AXuDQbHyeGMFNKPhxM_LwW1marbXI_827qzjF8NVgxO2k-WNFigFZg0sAT2r3nF3MW5i6KwztMUE-L146VtDjA3g5XwMW2cOA_00tLXl7Rr1RaW-_ayt96MtDz0-OZa4Vn0VppAUA69IRFkjhi-g-QRf9URKQZJ7k0Fia17FndBAhl0MRbTryaEksh1gBZQBe2FZMplv9Qin-C9KgBXFTkh7_hOQlYOGZdYQlnxQQKZjk8fKNkUsL0KPffiHQDt7iGuNYN55fPDAeKDgr",

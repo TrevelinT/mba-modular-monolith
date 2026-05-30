@@ -57,7 +57,7 @@ Do not assume the system default Node is correct — verify with `node -v` when 
 - `<Cart />` uses `useSyncExternalStore(subscribeToCartStore, getCartItems)` — **not** `useEffect` for the bus.
 - `subscribeToCart` must **not** return teardown; `unsubscribeFromCart` is explicit; React cleanup is in `subscribeToCartStore`'s return value.
 
-**Id convention:** `nintendo-switch-2` — `PRODUCT_ID` (product), `OFFER_PRODUCT_ID` (buy-box), catalog key (cart). Mismatch → cart no-op.
+**Id convention:** `nintendo-switch-2` — `PRODUCT_ID` (product), `OFFER_PRODUCT_ID` (buy-box), `CATALOG_PRODUCT_ID` (cart). Mismatch → cart no-op.
 
 **When changing integration:** update the relevant package `src/api/*`, both sides' tests, and this guidelines section if the contract changes.
 
@@ -91,10 +91,25 @@ sequenceDiagram
 
 **Container/view split:** `{Name}Container` is exported as `{Name}`; the view component stays internal.
 
+**Package-internal imports** (feature code under `src/components/` and `src/api/`):
+
+| From | Import via | Example |
+|------|------------|---------|
+| `src/components/*` | [`src/api/index.ts`](packages/cart/src/api/index.ts) (`../api`) | `import type { CartLineItem } from "../api"` in [`cart-view.tsx`](packages/cart/src/components/cart-view.tsx) |
+| `src/components/*` (container → view) | Sibling file (`./{name}-view`) | `import { CartView } from "./cart-view"` in [`cart-container.tsx`](packages/cart/src/components/cart-container.tsx) — **not** `./index` or `../components` |
+| `src/api/*` | Sibling modules (`./catalog`, `./cart-events`, …) | Avoid `from "./index"` or `from ".."` inside `api/` (barrel re-exports those files → circular dependency) |
+| Host / other packages | [`src/index.ts`](packages/cart/src/index.ts) only (`@repo/{package}`) | `import { Cart, cartAPI } from "@repo/cart"` |
+
+- **Do not** import `@repo/{package}` or `../index` from inside the same package: `src/index.ts` loads the container, which would pull the package entry again.
+- **Do not** import views through [`src/components/index.ts`](packages/cart/src/components/index.ts) from a container in that folder: the barrel exports the container, so `from "./index"` cycles container → index → container.
+- Re-export new API symbols from `src/api/index.ts` so components can import from `../api` without deep paths.
+- **Tests** may still import concrete files (`../api/cart-store`, `./cart-container`) when that keeps setup obvious.
+
 | Package | Component export | API namespace | Key symbols |
 |---|---|---|---|
 | `@repo/product` | `Product` (`ProductContainer`) | `productAPI` | `getProductPage`, `PRODUCT_ID`, … |
 | `@repo/buy-box` | `BuyBox` (`BuyBoxContainer`) | `buyBoxAPI` | `getOffer`, `OFFER_PRODUCT_ID`, `publishAddToCart`, … |
+| `@repo/cart` | `Cart` (`CartContainer`) | `cartAPI` | `subscribeToCart`, `getCartItems`, `CATALOG_PRODUCT_ID`, … |
 
 **Host examples:** `import { Product, productAPI } from "@repo/product"` and `import { BuyBox, buyBoxAPI } from "@repo/buy-box"` in [`apps/web/src/components/App.tsx`](apps/web/src/components/App.tsx).
 

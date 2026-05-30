@@ -1,6 +1,6 @@
 export const CART_ADD_ITEM_EVENT = "cart:add-item";
 
-export type AddToCartCommand = {
+export interface AddToCartCommand {
 	productId: string;
 	quantity: number;
-};
+}
