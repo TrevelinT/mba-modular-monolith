@@ -83,16 +83,11 @@ function ProductView({
 			</div>
 			<div className="lg:col-span-4 flex flex-col gap-lg">
 				<header>
-					<div className="flex items-center gap-sm mb-base justify-between">
-						{badge ? (
-							<p className="bg-primary text-on-primary text-label-md px-2 py-0.5 rounded font-bold uppercase">
-								{badge}
-							</p>
-						) : null}
-						<p className="text-on-tertiary-fixed-variant font-label-md">
-							Release: Winter 2024
+					{badge ? (
+						<p className="w-fit bg-primary text-on-primary text-label-md px-2 py-0.5 rounded font-bold uppercase mb-base">
+							{badge}
 						</p>
-					</div>
+					) : null}
 					<h1 className="font-headline-lg text-headline-lg text-on-surface mb-sm">
 						{title}
 					</h1>

@@ -16,7 +16,6 @@ export interface ProductPage {
 	title: string;
 	description: string;
 	photos: ProductPhoto[];
-	releaseLabel: string;
 	reviews: ProductReviews;
 	badge?: string;
 }
@@ -51,7 +50,6 @@ export function getProductPage(): ProductPage {
 		description:
 			"Experience the next generation of handheld gaming. The Nintendo Switch 2 features a stunning 8-inch OLED display, enhanced processing power for 4K TV output, and backward compatibility with your favorite Switch titles.",
 		photos: PRODUCT_PHOTOS,
-		releaseLabel: "Release: Winter 2024",
 		reviews: { rating: 4.5, count: 2451 },
 		badge: "Pre-order",
 	};
