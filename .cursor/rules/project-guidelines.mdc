@@ -29,6 +29,56 @@ Before any Node/npm command (`npm`, `npx`, `node`, `turbo`, etc.), from the repo
 
 Do not assume the system default Node is correct — verify with `node -v` when troubleshooting engine or Vite errors.
 
+## Micro-frontends & cart pub/sub
+
+**Purpose:** How `@repo/product`, `@repo/buy-box`, and `@repo/cart` integrate without shared packages or host orchestration.
+
+**Principles:**
+
+- Treat product, buy-box, and cart as **separate APIs** (micro-frontends); **no cross-imports** between feature packages.
+- **`apps/web` is a host only** — mounts `<Product />`, `<BuyBox />`, `<Cart />`; does not pass cart state, callbacks, or providers.
+- **No new integration packages** — event contract and catalogs are **duplicated** inside each package where needed.
+- Buy-box **publishes** `{ productId, quantity }` only; cart **resolves** `productId` against its own catalog (backend simulation).
+
+**Pub/sub bus (document):**
+
+| Role | Package | API | File |
+|------|---------|-----|------|
+| Publish | buy-box | `publishAddToCart(command)` | `packages/buy-box/src/api/publish-add-to-cart.ts` |
+| Subscribe | cart | `subscribeToCart(handler)` → `void` | `packages/cart/src/api/cart-pubsub.ts` |
+| Unsubscribe | cart | `unsubscribeFromCart(handler)` | `packages/cart/src/api/cart-pubsub.ts` |
+
+- Event: `cart:add-item` (`CustomEvent` on **`document`**, not `window`).
+- Duplicated in each package: `CART_ADD_ITEM_EVENT`, `AddToCartCommand` (`packages/*/src/api/cart-events.ts`).
+
+**React bridge (cart only):**
+
+- `subscribeToCartStore` + `getCartItems` in `packages/cart/src/api/cart-store.ts`.
+- `<Cart />` uses `useSyncExternalStore(subscribeToCartStore, getCartItems)` — **not** `useEffect` for the bus.
+- `subscribeToCart` must **not** return teardown; `unsubscribeFromCart` is explicit; React cleanup is in `subscribeToCartStore`'s return value.
+
+**Id convention:** `nintendo-switch-2` — `PRODUCT_ID` (product), `OFFER_PRODUCT_ID` (buy-box), catalog key (cart). Mismatch → cart no-op.
+
+**When changing integration:** update the relevant package `src/api/*`, both sides' tests, and this guidelines section if the contract changes.
+
+**Do not:**
+
+- Import `@repo/cart` from buy-box (or vice versa).
+- Wire cart state in `App.tsx` / `Header.tsx`.
+- Add a shared `@repo/cart-contract` (or similar) without an explicit repo decision.
+
+```mermaid
+sequenceDiagram
+  participant BuyBox as buy-box
+  participant Doc as document
+  participant Cart as cart
+  BuyBox->>Doc: dispatchEvent cart:add-item
+  Note over BuyBox: detail productId qty
+  Doc->>Cart: subscribeToCart handler
+  Cart->>Cart: getCatalogItem productId
+  Cart->>Cart: addToCart merge lines
+```
+
 ## Done means green
 
 Do not treat a coding task as finished until **lint/format** and **all tests** pass at the repo root (after nvm setup above).

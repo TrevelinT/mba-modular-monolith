@@ -1,21 +1,44 @@
-// type BuyBoxProps = {};
+import { useState } from "react";
+import { getOffer, OFFER_PRODUCT_ID } from "../api/offer";
+import { publishAddToCart } from "../api/publish-add-to-cart";
+
+function formatPrice(amount: number): string {
+	return `$${amount.toFixed(2)}`;
+}
 
 function BuyBox() {
+	const offer = getOffer();
+	const [quantity, setQuantity] = useState(1);
+
+	function handleDecrease() {
+		setQuantity((current) => Math.max(1, current - 1));
+	}
+
+	function handleIncrease() {
+		setQuantity((current) => current + 1);
+	}
+
+	function handlePreOrder() {
+		publishAddToCart({ productId: OFFER_PRODUCT_ID, quantity });
+	}
+
 	return (
 		<div className="lg:col-span-3 flex flex-col gap-lg">
 			<div className="bg-surface-container-low p-lg border border-outline-variant rounded-xl flex flex-col gap-lg">
 				<div className="flex flex-col gap-xs">
 					<div className="flex items-baseline gap-sm">
 						<span className="font-price-lg text-price-lg text-on-surface">
-							$499.99
+							{formatPrice(offer.salePrice)}
 						</span>
-						<s className="text-body-md text-secondary">$549.99</s>
+						<s className="text-body-md text-secondary">
+							{formatPrice(offer.listPrice)}
+						</s>
 					</div>
 					<p className="text-label-md text-secondary">
 						Tax included. Shipping calculated at checkout.
 					</p>
 					<p className="text-body-sm text-secondary font-medium mt-1">
-						ou 12x de $41.66 sem juros
+						{offer.installmentText}
 					</p>
 				</div>
 				<div className="flex flex-col gap-sm">
@@ -32,6 +55,7 @@ function BuyBox() {
 						<button
 							aria-label="Decrease quantity"
 							className="p-2 hover:bg-surface-container transition-colors"
+							onClick={handleDecrease}
 							type="button"
 						>
 							<span aria-hidden="true" className="material-symbols-outlined">
@@ -43,11 +67,12 @@ function BuyBox() {
 							className="flex-1 text-center font-bold"
 							role="status"
 						>
-							1
+							{quantity}
 						</span>
 						<button
 							aria-label="Increase quantity"
 							className="p-2 hover:bg-surface-container transition-colors"
+							onClick={handleIncrease}
 							type="button"
 						>
 							<span aria-hidden="true" className="material-symbols-outlined">
@@ -59,6 +84,7 @@ function BuyBox() {
 				<div className="flex flex-col gap-md pt-base">
 					<button
 						className="w-full bg-primary-container hover:bg-primary py-lg rounded text-on-primary font-headline-md transition-all active:opacity-80"
+						onClick={handlePreOrder}
 						type="button"
 					>
 						Pre-order Now

@@ -6,6 +6,8 @@ import {
 	screen,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
+import { resetCartStore } from "../api/cart-store";
 import { Cart } from "./cart";
 
 function createMatchMediaMock(initialCanHover: boolean) {
@@ -54,6 +56,7 @@ function mockMatchMedia(canHover: boolean) {
 describe("Cart", () => {
 	afterEach(() => {
 		cleanup();
+		resetCartStore();
 		vi.restoreAllMocks();
 	});
 
@@ -68,7 +71,7 @@ describe("Cart", () => {
 		render(<Cart />);
 
 		expect(
-			screen.getByRole("button", { name: "Shopping cart, 1 item" }),
+			screen.getByRole("button", { name: "Shopping cart, empty" }),
 		).toHaveAttribute("aria-expanded", "false");
 		expect(screen.getByLabelText("Cart preview")).toHaveAttribute(
 			"aria-hidden",
@@ -76,12 +79,31 @@ describe("Cart", () => {
 		);
 	});
 
+	it("updates badge and line items when add-to-cart event is published", () => {
+		mockMatchMedia(false);
+		render(<Cart />);
+
+		act(function dispatchAddToCart() {
+			document.dispatchEvent(
+				new CustomEvent(CART_ADD_ITEM_EVENT, {
+					detail: { productId: "nintendo-switch-2", quantity: 2 },
+				}),
+			);
+		});
+
+		expect(
+			screen.getByRole("button", { name: "Shopping cart, 2 items" }),
+		).toBeInTheDocument();
+		expect(screen.getByText("Quantity: 2")).toBeInTheDocument();
+		expect(screen.getAllByText("$999.98")).toHaveLength(2);
+	});
+
 	it("toggles the panel on click in touch mode", () => {
 		mockMatchMedia(false);
 		render(<Cart />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, 1 item",
+			name: "Shopping cart, empty",
 		});
 		const panel = screen.getByLabelText("Cart preview");
 
@@ -99,7 +121,7 @@ describe("Cart", () => {
 		render(<Cart />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, 1 item",
+			name: "Shopping cart, empty",
 		});
 		const panel = screen.getByLabelText("Cart preview");
 
@@ -116,7 +138,7 @@ describe("Cart", () => {
 		render(<Cart />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, 1 item",
+			name: "Shopping cart, empty",
 		});
 		const panel = screen.getByLabelText("Cart preview");
 		const container = cartButton.parentElement;
@@ -137,7 +159,7 @@ describe("Cart", () => {
 		render(<Cart />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, 1 item",
+			name: "Shopping cart, empty",
 		});
 		const panel = screen.getByLabelText("Cart preview");
 
@@ -152,7 +174,7 @@ describe("Cart", () => {
 		render(<Cart />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, 1 item",
+			name: "Shopping cart, empty",
 		});
 		const panel = screen.getByLabelText("Cart preview");
 		const container = cartButton.parentElement as HTMLElement;
