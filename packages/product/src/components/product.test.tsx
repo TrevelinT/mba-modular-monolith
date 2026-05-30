@@ -1,12 +1,18 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Product } from "./product";
+import { getProductPage } from "../api/product";
+import { Product } from "../index";
 
 describe("Product", () => {
-	it("renders the product title", () => {
+	it("renders API-driven title, badge, and description", () => {
+		const page = getProductPage();
 		render(<Product />);
+
+		expect(screen.getByText(page.title)).toBeInTheDocument();
+		expect(screen.getByText(page.badge as string)).toBeInTheDocument();
+		expect(screen.getByText(page.description)).toBeInTheDocument();
 		expect(
-			screen.getByText('Nintendo Switch 2 - 8" OLED Edition'),
+			screen.getByText(`(${page.reviews.count.toLocaleString()} reviews)`),
 		).toBeInTheDocument();
 	});
 });

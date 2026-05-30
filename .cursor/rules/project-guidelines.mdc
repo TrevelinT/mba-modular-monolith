@@ -79,6 +79,31 @@ sequenceDiagram
   Cart->>Cart: addToCart merge lines
 ```
 
+## Feature package public API (`@repo/product`)
+
+**Single entry point.** Consumers import only from `@repo/product` (not `@repo/product/api`, `@repo/product/components`, or deep file paths).
+
+**`package.json` `exports`:** only `"."` for JavaScript/TypeScript, plus `"./styles.css"` for Tailwind. Do not add `./api`, `./components`, or `./components/*` subpaths.
+
+**`src/index.ts` is the public contract.** Re-export what the host (or other packages) may use—for example:
+
+- `Product` — container component (`ProductContainer` alias)
+- `productAPI` — namespace of API functions, constants, and types (`getProductPage`, `PRODUCT_ID`, …)
+
+Implementation stays under `src/api/` and `src/components/`; those folders are internal unless explicitly re-exported from `src/index.ts`.
+
+**Host example:** `import { Product, productAPI } from "@repo/product"` in [`apps/web/src/components/App.tsx`](apps/web/src/components/App.tsx).
+
+When adding a new public symbol, update `src/index.ts` and package tests; do not expose new `package.json` export paths.
+
+## TypeScript interfaces
+
+- **Component props:** use `interface`, not `type`, named `{ComponentName}Props` (e.g. `ProductViewProps`).
+- **Export:** export the props interface when tests or callers need it; keep internal-only props unexported.
+- **API / domain object shapes:** prefer `interface` for plain object contracts (e.g. `ProductPhoto`, `ProductReviews`); use `type` only when the shape requires unions, intersections, mapped types, or aliases over primitives.
+- **Optional fields:** use `?` on the interface property (e.g. `badge?: string`); render conditionally in the component — omit the DOM node when absent, no empty placeholder.
+- **Reference example:** `ProductView` / `ProductViewProps` in [`packages/product/src/components/product-view.tsx`](packages/product/src/components/product-view.tsx).
+
 ## Done means green
 
 Do not treat a coding task as finished until **lint/format** and **all tests** pass at the repo root (after nvm setup above).

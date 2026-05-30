@@ -1,5 +1,5 @@
 import { BuyBox } from "@repo/buy-box/components/buy-box";
-import { Product } from "@repo/product/components/product";
+import { Product } from "@repo/product";
 import { Breadcrumb } from "./Breadcrumb/Breadcrumb";
 import { Footer } from "./Footer";
 import { Header } from "./Header";

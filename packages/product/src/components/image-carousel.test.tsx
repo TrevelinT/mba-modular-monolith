@@ -1,6 +1,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ImageCarousel, PRODUCT_IMAGES } from "./image-carousel";
+import { getProductPage } from "../api/product";
+import { ImageCarousel } from "./image-carousel";
+
+const PHOTOS = getProductPage().photos;
 
 function mockMatchMedia(canHover: boolean) {
 	let matches = canHover;
@@ -48,12 +51,12 @@ describe("ImageCarousel", () => {
 
 	it("shows the first slide by default with the first thumbnail selected", () => {
 		mockMatchMedia(false);
-		render(<ImageCarousel />);
+		render(<ImageCarousel photos={PHOTOS} />);
 
 		const mainImage = screen.getByRole("img", {
-			name: PRODUCT_IMAGES[0].alt,
+			name: PHOTOS[0].alt,
 		});
-		expect(mainImage).toHaveAttribute("src", PRODUCT_IMAGES[0].src);
+		expect(mainImage).toHaveAttribute("src", PHOTOS[0].src);
 
 		const frontThumbnail = screen.getByRole("button", {
 			name: /front view/i,
@@ -64,15 +67,15 @@ describe("ImageCarousel", () => {
 
 	it("updates the main image and selection when a thumbnail is clicked", () => {
 		mockMatchMedia(false);
-		render(<ImageCarousel />);
+		render(<ImageCarousel photos={PHOTOS} />);
 
 		const sideThumbnail = screen.getByRole("button", { name: /side view/i });
 		fireEvent.click(sideThumbnail);
 
 		const mainImage = screen.getByRole("img", {
-			name: PRODUCT_IMAGES[1].alt,
+			name: PHOTOS[1].alt,
 		});
-		expect(mainImage).toHaveAttribute("src", PRODUCT_IMAGES[1].src);
+		expect(mainImage).toHaveAttribute("src", PHOTOS[1].src);
 		expect(sideThumbnail).toHaveClass("border-primary", "border-2");
 		expect(sideThumbnail).toHaveAttribute("aria-current", "true");
 
@@ -84,7 +87,7 @@ describe("ImageCarousel", () => {
 
 	it("updates the main image on thumbnail hover in desktop mode", () => {
 		mockMatchMedia(true);
-		render(<ImageCarousel />);
+		render(<ImageCarousel photos={PHOTOS} />);
 
 		const dockedThumbnail = screen.getByRole("button", {
 			name: /docked view/i,
@@ -92,25 +95,25 @@ describe("ImageCarousel", () => {
 		fireEvent.mouseEnter(dockedThumbnail);
 
 		const mainImage = screen.getByRole("img", {
-			name: PRODUCT_IMAGES[2].alt,
+			name: PHOTOS[2].alt,
 		});
-		expect(mainImage).toHaveAttribute("src", PRODUCT_IMAGES[2].src);
+		expect(mainImage).toHaveAttribute("src", PHOTOS[2].src);
 		expect(dockedThumbnail).toHaveAttribute("aria-current", "true");
 	});
 
 	it("does not update the main image on hover in mobile mode", () => {
 		mockMatchMedia(false);
-		render(<ImageCarousel />);
+		render(<ImageCarousel photos={PHOTOS} />);
 
 		const sideThumbnail = screen.getByRole("button", { name: /side view/i });
 		fireEvent.mouseEnter(sideThumbnail);
 
 		const mainImage = screen.getByRole("img", {
-			name: PRODUCT_IMAGES[0].alt,
+			name: PHOTOS[0].alt,
 		});
-		expect(mainImage).toHaveAttribute("src", PRODUCT_IMAGES[0].src);
+		expect(mainImage).toHaveAttribute("src", PHOTOS[0].src);
 
 		fireEvent.click(sideThumbnail);
-		expect(mainImage).toHaveAttribute("src", PRODUCT_IMAGES[1].src);
+		expect(mainImage).toHaveAttribute("src", PHOTOS[1].src);
 	});
 });

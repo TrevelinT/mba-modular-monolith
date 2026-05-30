@@ -17,10 +17,7 @@ export default mergeConfig(rootConfig, {
 				packagesDir,
 				"buy-box/src/components/buy-box.tsx",
 			),
-			"@repo/product/components/product": path.join(
-				packagesDir,
-				"product/src/components/product.tsx",
-			),
+			"@repo/product": path.join(packagesDir, "product/src/index.ts"),
 		},
 	},
 });

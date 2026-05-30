@@ -12,18 +12,6 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
-		},
-		"./components": {
-			"types": "./dist/components/index.d.ts",
-			"default": "./dist/components/index.js"
-		},
-		"./components/*": {
-			"types": "./dist/components/*.d.ts",
-			"default": "./dist/components/*.js"
-		},
-		"./api": {
-			"types": "./dist/api/index.d.ts",
-			"default": "./dist/api/index.js"
 		}
 	},
 	"license": "MIT",
