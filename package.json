@@ -12,6 +12,7 @@
 		"test-coverage:merge": "turbo run //#merge-coverage",
 		"test-coverage:report": "turbo run //#report-coverage",
 		"merge-coverage": "node scripts/merge-coverage.mjs",
+		"report-build-artifacts": "node scripts/report-build-artifacts.mjs",
 		"report-coverage": "nyc report -t coverage/merged --report-dir coverage/report --reporter=html --reporter=text"
 	},
 	"devDependencies": {
