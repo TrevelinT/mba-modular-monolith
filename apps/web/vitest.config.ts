@@ -13,10 +13,7 @@ export default mergeConfig(rootConfig, {
 	resolve: {
 		alias: {
 			"@repo/cart": path.join(packagesDir, "cart/src/index.ts"),
-			"@repo/buy-box/components/buy-box": path.join(
-				packagesDir,
-				"buy-box/src/components/buy-box.tsx",
-			),
+			"@repo/buy-box": path.join(packagesDir, "buy-box/src/index.ts"),
 			"@repo/product": path.join(packagesDir, "product/src/index.ts"),
 		},
 	},

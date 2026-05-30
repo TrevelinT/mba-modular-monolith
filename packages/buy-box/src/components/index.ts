@@ -1,1 +1,2 @@
-export * from "./buy-box";
+export { BuyBoxContainer } from "./buy-box-container";
+export { BuyBoxView } from "./buy-box-view";

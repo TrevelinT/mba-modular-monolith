@@ -1,6 +1,13 @@
 export const OFFER_PRODUCT_ID = "nintendo-switch-2";
 
-export function getOffer() {
+export interface Offer {
+	productId: string;
+	salePrice: number;
+	listPrice: number;
+	installmentText: string;
+}
+
+export function getOffer(): Offer {
 	return {
 		productId: OFFER_PRODUCT_ID,
 		salePrice: 499.99,
