@@ -7,6 +7,10 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const packagesDir = path.resolve(dirname, "../../packages");
 
 export default mergeConfig(rootConfig, {
+	test: {
+		include: ["src/**/*.{test,spec}.{ts,tsx}"],
+		exclude: ["tests/**", "**/node_modules/**", "**/dist/**"],
+	},
 	esbuild: {
 		jsx: "automatic",
 	},

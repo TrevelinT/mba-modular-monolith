@@ -177,7 +177,7 @@ When adding a new public symbol, update `src/index.ts` and package tests; do not
 
 ## Done means green
 
-Do not treat a coding task as finished until **lint/format** and **all tests** pass at the repo root (after nvm setup above).
+Do not treat a coding task as finished until **lint/format**, **unit tests**, and (when applicable) **E2E tests** pass at the repo root (after nvm setup above).
 
 ### Lint and format
 
@@ -185,15 +185,28 @@ Do not treat a coding task as finished until **lint/format** and **all tests** p
 2. If it fails, fix manually or run `npm run format-and-lint:fix`, then `npm run format-and-lint` again until it passes.
 3. Do not skip or ignore violations unless the user explicitly asks.
 
-### Tests
+### Unit tests
 
-1. Run `npm run test` (Turbo runs tests in all workspaces).
+1. Run `npm run test` (Turbo runs Vitest in all workspaces).
 2. Fix failing tests or regressions you introduced; re-run until green.
 3. Do not claim the task is done while tests are failing or were not run.
+
+### E2E tests
+
+After unit tests pass, run Playwright E2E whenever the task touches **feature behavior** — i.e. changes in `@repo/product`, `@repo/buy-box`, `@repo/cart`, or host integration in `apps/web` (mounting, layout, cross-MFE flows).
+
+1. Run `npm run test:e2e` from the repo root (Turbo runs `build` first, then Playwright in `apps/web`).
+2. Fix failing specs or regressions; re-run until green.
+3. If a **visual** change is intentional, update baselines per [`apps/web/README.md`](apps/web/README.md) (`CI=true npm run test:e2e:update-snapshots --workspace=web` after `npm run build`).
+
+Skip E2E only for non-feature work (docs, tooling-only, config with no UI/API impact). When unsure, run E2E.
+
+Full E2E setup, CI path, and snapshot workflow: [`apps/web/README.md`](apps/web/README.md).
 
 ### When to run
 
 - After substantive code changes, before summarizing completion.
+- **Feature work:** `format-and-lint` → `npm run test` → `npm run test:e2e` (in that order).
 - For docs-only edits with no behavioral impact, run checks when unsure; otherwise note why they were skipped.
 
 If a command fails, fix the root cause and re-run the full check sequence before finishing.
