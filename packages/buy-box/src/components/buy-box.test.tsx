@@ -9,9 +9,9 @@ describe("BuyBox", () => {
 		cleanup();
 	});
 
-	it("renders the pre-order button", () => {
+	it("renders the add to cart button", () => {
 		render(<BuyBoxContainer />);
-		expect(screen.getByText("Pre-order Now")).toBeInTheDocument();
+		expect(screen.getByText("Adicionar ao carrinho")).toBeInTheDocument();
 	});
 
 	it("increases and decreases quantity", () => {
@@ -19,21 +19,27 @@ describe("BuyBox", () => {
 
 		expect(screen.getByRole("status")).toHaveTextContent("1");
 
-		fireEvent.click(screen.getByRole("button", { name: "Increase quantity" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Aumentar quantidade" }),
+		);
 		expect(screen.getByRole("status")).toHaveTextContent("2");
 
-		fireEvent.click(screen.getByRole("button", { name: "Decrease quantity" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Diminuir quantidade" }),
+		);
 		expect(screen.getByRole("status")).toHaveTextContent("1");
 	});
 
 	it("does not decrease quantity below 1", () => {
 		render(<BuyBoxContainer />);
 
-		fireEvent.click(screen.getByRole("button", { name: "Decrease quantity" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Diminuir quantidade" }),
+		);
 		expect(screen.getByRole("status")).toHaveTextContent("1");
 	});
 
-	it("publishes add-to-cart with OFFER_PRODUCT_ID and quantity on pre-order", () => {
+	it("publishes add-to-cart with OFFER_PRODUCT_ID and quantity on add to cart", () => {
 		const handler = vi.fn();
 		function onAdd(event: Event) {
 			handler((event as CustomEvent).detail);
@@ -41,8 +47,10 @@ describe("BuyBox", () => {
 		document.addEventListener(CART_ADD_ITEM_EVENT, onAdd);
 
 		render(<BuyBoxContainer />);
-		fireEvent.click(screen.getByRole("button", { name: "Increase quantity" }));
-		fireEvent.click(screen.getByText("Pre-order Now"));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Aumentar quantidade" }),
+		);
+		fireEvent.click(screen.getByText("Adicionar ao carrinho"));
 
 		expect(handler).toHaveBeenCalledWith({
 			productId: OFFER_PRODUCT_ID,

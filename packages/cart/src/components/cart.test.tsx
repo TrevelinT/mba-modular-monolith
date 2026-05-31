@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
 import { resetCartStore } from "../api/cart-store";
 import { CATALOG_PRODUCT_ID } from "../api/catalog";
+import { formatPrice } from "../api/format-price";
 import { CartContainer } from "./cart-container";
 
 function createMatchMediaMock(initialCanHover: boolean) {
@@ -64,7 +65,7 @@ describe("Cart", () => {
 	it("renders the cart heading", () => {
 		mockMatchMedia(false);
 		render(<CartContainer />);
-		expect(screen.getByText("Your Cart")).toBeInTheDocument();
+		expect(screen.getByText("Seu carrinho")).toBeInTheDocument();
 	});
 
 	it("starts with the panel closed", () => {
@@ -72,12 +73,11 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		expect(
-			screen.getByRole("button", { name: "Shopping cart, empty" }),
+			screen.getByRole("button", { name: "Carrinho de compras, vazio" }),
 		).toHaveAttribute("aria-expanded", "false");
-		expect(screen.getByLabelText("Cart preview")).toHaveAttribute(
-			"aria-hidden",
-			"true",
-		);
+		expect(
+			screen.getByLabelText("Pré-visualização do carrinho"),
+		).toHaveAttribute("aria-hidden", "true");
 	});
 
 	it("updates badge and line items when add-to-cart event is published", () => {
@@ -93,10 +93,13 @@ describe("Cart", () => {
 		});
 
 		expect(
-			screen.getByRole("button", { name: "Shopping cart, 2 items" }),
+			screen.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
 		).toBeInTheDocument();
-		expect(screen.getByText("Quantity: 2")).toBeInTheDocument();
-		expect(screen.getAllByText("$999.98")).toHaveLength(2);
+		expect(screen.getByText("Quantidade: 2")).toBeInTheDocument();
+		const lineTotal = formatPrice(499.99 * 2);
+		expect(
+			screen.getAllByText((_, element) => element?.textContent === lineTotal),
+		).toHaveLength(2);
 	});
 
 	it("toggles the panel on click in touch mode", () => {
@@ -104,9 +107,9 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, empty",
+			name: "Carrinho de compras, vazio",
 		});
-		const panel = screen.getByLabelText("Cart preview");
+		const panel = screen.getByLabelText("Pré-visualização do carrinho");
 
 		fireEvent.click(cartButton);
 		expect(cartButton).toHaveAttribute("aria-expanded", "true");
@@ -122,9 +125,9 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, empty",
+			name: "Carrinho de compras, vazio",
 		});
-		const panel = screen.getByLabelText("Cart preview");
+		const panel = screen.getByLabelText("Pré-visualização do carrinho");
 
 		fireEvent.click(cartButton);
 		expect(panel).toHaveAttribute("aria-hidden", "false");
@@ -139,9 +142,9 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, empty",
+			name: "Carrinho de compras, vazio",
 		});
-		const panel = screen.getByLabelText("Cart preview");
+		const panel = screen.getByLabelText("Pré-visualização do carrinho");
 		const container = cartButton.parentElement;
 
 		expect(container).not.toBeNull();
@@ -160,9 +163,9 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, empty",
+			name: "Carrinho de compras, vazio",
 		});
-		const panel = screen.getByLabelText("Cart preview");
+		const panel = screen.getByLabelText("Pré-visualização do carrinho");
 
 		fireEvent.mouseEnter(cartButton);
 		fireEvent.mouseEnter(panel);
@@ -175,9 +178,9 @@ describe("Cart", () => {
 		render(<CartContainer />);
 
 		const cartButton = screen.getByRole("button", {
-			name: "Shopping cart, empty",
+			name: "Carrinho de compras, vazio",
 		});
-		const panel = screen.getByLabelText("Cart preview");
+		const panel = screen.getByLabelText("Pré-visualização do carrinho");
 		const container = cartButton.parentElement as HTMLElement;
 
 		fireEvent.mouseEnter(container);

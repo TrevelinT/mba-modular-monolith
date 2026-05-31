@@ -1,4 +1,6 @@
 function Footer() {
+	const currentYear = new Date().getFullYear();
+
 	return (
 		<footer className="w-full py-xl bg-secondary-container dark:bg-on-secondary-fixed-variant">
 			<div className="flex flex-col md:flex-row justify-between items-center gap-md max-w-max-width mx-auto px-margin-mobile md:px-gutter">
@@ -7,17 +9,17 @@ function Footer() {
 						Game Store
 					</p>
 					<small className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim m-0">
-						© 2024 Game Store Inc. All rights reserved.
+						© {currentYear} Game Store Inc. Todos os direitos reservados.
 					</small>
 				</div>
-				<nav aria-label="Footer">
+				<nav aria-label="Rodapé">
 					<ul className="flex flex-wrap justify-center gap-md list-none m-0 p-0">
 						<li id="footer-privacy-policy">
 							<a
 								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-privacy-policy"
 							>
-								Privacy Policy
+								Política de Privacidade
 							</a>
 						</li>
 						<li id="footer-terms-of-service">
@@ -25,7 +27,7 @@ function Footer() {
 								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-terms-of-service"
 							>
-								Terms of Service
+								Termos de Uso
 							</a>
 						</li>
 						<li id="footer-shipping-info">
@@ -33,7 +35,7 @@ function Footer() {
 								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-shipping-info"
 							>
-								Shipping Info
+								Informações de Entrega
 							</a>
 						</li>
 						<li id="footer-returns">
@@ -41,7 +43,7 @@ function Footer() {
 								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-returns"
 							>
-								Returns
+								Devoluções
 							</a>
 						</li>
 						<li id="footer-contact-us">
@@ -49,7 +51,7 @@ function Footer() {
 								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-contact-us"
 							>
-								Contact Us
+								Fale Conosco
 							</a>
 						</li>
 					</ul>
@@ -57,7 +59,7 @@ function Footer() {
 				<ul className="flex gap-md">
 					<li>
 						<button
-							aria-label="Select language"
+							aria-label="Selecionar idioma"
 							className="text-on-secondary-container"
 							type="button"
 						>
@@ -68,7 +70,7 @@ function Footer() {
 					</li>
 					<li>
 						<button
-							aria-label="Help"
+							aria-label="Ajuda"
 							className="text-on-secondary-container"
 							type="button"
 						>

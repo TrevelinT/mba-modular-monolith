@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { formatPrice } from "../api/format-price";
 import { getOffer } from "../api/offer";
 import { BuyBoxView } from "./buy-box-view";
 
@@ -23,9 +24,21 @@ describe("BuyBoxView", () => {
 			/>,
 		);
 
-		expect(screen.getByText("$499.99")).toBeInTheDocument();
-		expect(screen.getByText("$549.99")).toBeInTheDocument();
-		expect(screen.getByText(offer.installmentText)).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				(_, element) => element?.textContent === formatPrice(offer.salePrice),
+			),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				(_, element) => element?.textContent === formatPrice(offer.listPrice),
+			),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				(_, element) => element?.textContent === offer.installmentText,
+			),
+		).toBeInTheDocument();
 		expect(screen.getByRole("status")).toHaveTextContent("1");
 	});
 
@@ -43,7 +56,9 @@ describe("BuyBoxView", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Increase quantity" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Aumentar quantidade" }),
+		);
 		expect(onIncreaseQuantity).toHaveBeenCalledOnce();
 	});
 
@@ -61,11 +76,13 @@ describe("BuyBoxView", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Decrease quantity" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Diminuir quantidade" }),
+		);
 		expect(onDecreaseQuantity).toHaveBeenCalledOnce();
 	});
 
-	it("calls onPreOrder when pre-order button is clicked", () => {
+	it("calls onPreOrder when add to cart button is clicked", () => {
 		const onPreOrder = vi.fn();
 		render(
 			<BuyBoxView
@@ -79,7 +96,7 @@ describe("BuyBoxView", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByText("Pre-order Now"));
+		fireEvent.click(screen.getByText("Adicionar ao carrinho"));
 		expect(onPreOrder).toHaveBeenCalledOnce();
 	});
 });

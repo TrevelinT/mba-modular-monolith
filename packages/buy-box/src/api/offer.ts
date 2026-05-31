@@ -1,4 +1,8 @@
+import { formatPrice } from "./format-price";
+
 export const OFFER_PRODUCT_ID = "nintendo-switch-2";
+
+const INSTALLMENT_COUNT = 10;
 
 export interface Offer {
 	productId: string;
@@ -8,10 +12,14 @@ export interface Offer {
 }
 
 export function getOffer(): Offer {
+	const salePrice = 4099.99;
+	const listPrice = 4499.99;
+	const installmentAmount = salePrice / INSTALLMENT_COUNT;
+
 	return {
 		productId: OFFER_PRODUCT_ID,
-		salePrice: 499.99,
-		listPrice: 549.99,
-		installmentText: "ou 12x de $41.66 sem juros",
+		salePrice,
+		listPrice,
+		installmentText: `ou ${INSTALLMENT_COUNT}x de ${formatPrice(installmentAmount)} sem juros`,
 	};
 }

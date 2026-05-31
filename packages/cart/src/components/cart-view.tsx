@@ -1,5 +1,6 @@
 import type { RefObject } from "react";
 import type { CartLineItem } from "../api";
+import { formatPrice } from "../api/format-price";
 
 export interface CartViewProps {
 	containerRef: RefObject<HTMLDivElement | null>;
@@ -12,10 +13,6 @@ export interface CartViewProps {
 	onMouseEnter: () => void;
 	onMouseLeave: () => void;
 	onButtonClick: () => void;
-}
-
-function formatPrice(amount: number): string {
-	return `$${amount.toFixed(2)}`;
 }
 
 function CartView({
@@ -71,23 +68,25 @@ function CartView({
 			>
 				<section
 					aria-hidden={!isOpen}
-					aria-label="Cart preview"
+					aria-label="Pré-visualização do carrinho"
 					className={`w-80 bg-surface border border-outline-variant rounded-xl shadow-2xl p-4 transition-all duration-200 ${
 						isOpen ? "opacity-100 visible" : "opacity-0 invisible"
 					}`}
 					id="cart-panel"
 				>
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="font-headline-md text-on-surface m-0">Your Cart</h2>
+						<h2 className="font-headline-md text-on-surface m-0">
+							Seu carrinho
+						</h2>
 						{!isEmpty ? (
 							<p className="text-body-sm text-secondary">
-								{itemCount} {itemCount === 1 ? "Item" : "Items"}
+								{itemCount} {itemCount === 1 ? "item" : "itens"}
 							</p>
 						) : null}
 					</div>
 					{isEmpty ? (
 						<p className="text-body-sm text-secondary mb-6">
-							Your cart is empty.
+							Seu carrinho está vazio.
 						</p>
 					) : (
 						<>
@@ -106,7 +105,7 @@ function CartView({
 												{item.name}
 											</p>
 											<p className="text-body-sm text-secondary">
-												Quantity: {item.quantity}
+												Quantidade: {item.quantity}
 											</p>
 										</div>
 										<p className="font-bold text-primary text-body-md">
@@ -126,13 +125,13 @@ function CartView({
 									className="w-full bg-primary-container text-on-primary py-3 rounded font-bold text-body-md hover:bg-primary transition-colors cursor-pointer"
 									type="button"
 								>
-									Checkout
+									Finalizar compra
 								</button>
 								<button
 									className="w-full text-secondary hover:text-on-surface py-1 text-body-sm transition-colors text-center font-medium cursor-pointer"
 									type="button"
 								>
-									View Cart
+									Ver carrinho
 								</button>
 							</div>
 						</>

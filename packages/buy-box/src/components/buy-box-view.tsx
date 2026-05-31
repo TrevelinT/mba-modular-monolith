@@ -1,3 +1,5 @@
+import { formatPrice } from "../api/format-price";
+
 export interface BuyBoxViewProps {
 	salePrice: number;
 	listPrice: number;
@@ -6,10 +8,6 @@ export interface BuyBoxViewProps {
 	onDecreaseQuantity: () => void;
 	onIncreaseQuantity: () => void;
 	onPreOrder: () => void;
-}
-
-function formatPrice(amount: number): string {
-	return `$${amount.toFixed(2)}`;
 }
 
 function BuyBoxView({
@@ -25,17 +23,14 @@ function BuyBoxView({
 		<div className="lg:col-span-3 flex flex-col gap-lg">
 			<div className="bg-surface-container-low p-lg border border-outline-variant rounded-xl flex flex-col gap-lg">
 				<div className="flex flex-col gap-xs">
-					<div className="flex items-baseline gap-sm">
-						<span className="font-price-lg text-price-lg text-on-surface">
-							{formatPrice(salePrice)}
-						</span>
+					<div className="flex flex-col gap-xs">
 						<s className="text-body-md text-secondary">
 							{formatPrice(listPrice)}
 						</s>
+						<span className="font-price-lg text-price-lg text-on-surface">
+							{formatPrice(salePrice)}
+						</span>
 					</div>
-					<p className="text-label-md text-secondary">
-						Tax included. Shipping calculated at checkout.
-					</p>
 					<p className="text-body-sm text-secondary font-medium mt-1">
 						{installmentText}
 					</p>
@@ -45,14 +40,14 @@ function BuyBoxView({
 						className="font-label-md text-on-surface uppercase tracking-wider"
 						htmlFor="quantity"
 					>
-						Quantity
+						Quantidade
 					</label>
 					<div
 						className="flex items-center w-full max-w-[140px] border border-outline-variant rounded"
 						id="quantity"
 					>
 						<button
-							aria-label="Decrease quantity"
+							aria-label="Diminuir quantidade"
 							className="p-2 hover:bg-surface-container transition-colors"
 							onClick={onDecreaseQuantity}
 							type="button"
@@ -69,7 +64,7 @@ function BuyBoxView({
 							{quantity}
 						</span>
 						<button
-							aria-label="Increase quantity"
+							aria-label="Aumentar quantidade"
 							className="p-2 hover:bg-surface-container transition-colors"
 							onClick={onIncreaseQuantity}
 							type="button"
@@ -86,7 +81,7 @@ function BuyBoxView({
 						onClick={onPreOrder}
 						type="button"
 					>
-						Pre-order Now
+						Adicionar ao carrinho
 					</button>
 				</div>
 				<div className="flex items-center gap-sm text-body-sm font-medium text-on-surface pt-sm">
@@ -96,7 +91,7 @@ function BuyBoxView({
 					>
 						check_circle
 					</span>
-					Free Shipping &amp; Express Delivery
+					Frete grátis e entrega expressa
 				</div>
 			</div>
 			<div className="grid grid-cols-3 gap-sm">
@@ -108,7 +103,7 @@ function BuyBoxView({
 						local_shipping
 					</span>
 					<span className="text-[9px] font-bold uppercase text-secondary">
-						Fast Delivery
+						Entrega rápida
 					</span>
 				</div>
 				<div className="flex flex-col items-center text-center gap-xs">
@@ -119,7 +114,7 @@ function BuyBoxView({
 						verified_user
 					</span>
 					<span className="text-[9px] font-bold uppercase text-secondary">
-						2-Year Warranty
+						Garantia de 2 anos
 					</span>
 				</div>
 				<div className="flex flex-col items-center text-center gap-xs">
@@ -130,7 +125,7 @@ function BuyBoxView({
 						sync
 					</span>
 					<span className="text-[9px] font-bold uppercase text-secondary">
-						Easy Returns
+						Devolução fácil
 					</span>
 				</div>
 			</div>

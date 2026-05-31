@@ -12,14 +12,16 @@ describe("App", () => {
 		expect(screen.getByText("Game Store")).toBeInTheDocument();
 	});
 
-	it("adds item to cart when pre-order is clicked", () => {
+	it("adds item to cart when add to cart is clicked", () => {
 		render(<App />);
 
 		expect(
 			screen.getByRole("button", { name: "Shopping cart, empty" }),
 		).toBeInTheDocument();
 
-		fireEvent.click(screen.getByText("Pre-order Now"));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Adicionar ao carrinho" }),
+		);
 
 		expect(
 			screen.getByRole("button", { name: "Shopping cart, 1 item" }),

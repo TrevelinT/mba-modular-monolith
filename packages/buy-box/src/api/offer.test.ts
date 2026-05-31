@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { formatPrice } from "./format-price";
 import { getOffer, OFFER_PRODUCT_ID } from "./offer";
 
 describe("offer API", () => {
@@ -9,8 +10,10 @@ describe("offer API", () => {
 	it("getOffer returns offer metadata", () => {
 		const offer = getOffer();
 		expect(offer.productId).toBe(OFFER_PRODUCT_ID);
-		expect(offer.salePrice).toBe(499.99);
-		expect(offer.listPrice).toBe(549.99);
-		expect(offer.installmentText).toBe("ou 12x de $41.66 sem juros");
+		expect(offer.salePrice).toBe(4099.99);
+		expect(offer.listPrice).toBe(4499.99);
+		expect(offer.installmentText).toBe(
+			`ou 10x de ${formatPrice(4099.99 / 10)} sem juros`,
+		);
 	});
 });

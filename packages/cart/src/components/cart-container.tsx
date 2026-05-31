@@ -37,8 +37,8 @@ function CartContainer() {
 	const isEmpty = itemCount === 0;
 
 	const cartAriaLabel = isEmpty
-		? "Shopping cart, empty"
-		: `Shopping cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`;
+		? "Carrinho de compras, vazio"
+		: `Carrinho de compras, ${itemCount} ${itemCount === 1 ? "item" : "itens"}`;
 
 	useEffect(
 		function closeCartOnOutsideClick() {

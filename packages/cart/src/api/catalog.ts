@@ -18,10 +18,10 @@ export interface CartLineItem {
 
 const catalog: Record<string, CatalogItem> = {
 	[CATALOG_PRODUCT_ID]: {
-		name: 'Nintendo Switch 2 - 8" OLED',
+		name: "Nintendo Switch 2 - Bundle Mario Kart World",
 		imageUrl:
-			"https://lh3.googleusercontent.com/aida-public/AB6AXuDQbHyeGMFNKPhxM_LwW1marbXI_827qzjF8NVgxO2k-WNFigFZg0sAT2r3nF3MW5i6KwztMUE-L146VtDjA3g5XwMW2cOA_00tLXl7Rr1RaW-_ayt96MtDz0-OZa4Vn0VppAUA69IRFkjhi-g-QRf9URKQZJ7k0Fia17FndBAhl0MRbTryaEksh1gBZQBe2FZMplv9Qin-C9KgBXFTkh7_hOQlYOGZdYQlnxQQKZjk8fKNkUsL0KPffiHQDt7iGuNYN55fPDAeKDgr",
-		unitPrice: 499.99,
+			"https://cdn.awsli.com.br/600x450/2443/2443989/produto/366571198/63388ed8cf5558ee164d38ad715b2266-5oolcqzk74.jpg",
+		unitPrice: 4099.99,
 	},
 };
 
