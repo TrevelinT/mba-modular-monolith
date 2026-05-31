@@ -11,10 +11,47 @@ permissions:
   actions: write
 
 jobs:
-  ci:
-    name: Build and Test
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Report build artifacts
+        run: node scripts/report-build-artifacts.mjs
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-dist
+          path: apps/web/dist/
+          if-no-files-found: error
+
+      - name: Type check
+        run: npm run type-check
+
+  quality:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Check out code
@@ -35,24 +72,36 @@ jobs:
       - name: Lint and format
         run: npm run format-and-lint
 
-      - name: Build
-        run: npm run build
+      - name: Test
+        run: npm run test-coverage
 
-      - name: Report build artifacts
-        run: node scripts/report-build-artifacts.mjs
+  e2e:
+    name: E2E Tests
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
         with:
           name: web-dist
           path: apps/web/dist/
-          if-no-files-found: error
-
-      - name: Type check
-        run: npm run type-check
-
-      - name: Test
-        run: npm run test-coverage
 
       - name: Install Browsers
         working-directory: apps/web
@@ -62,7 +111,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_HTML_OPEN: never
-        run: npm run test:e2e
+        run: npm run test:e2e --workspace=web
 
       - name: Upload Playwright report
         if: failure()

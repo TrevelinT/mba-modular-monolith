@@ -39,7 +39,19 @@ npm run type-check
 
 Runs `tsc --noEmit` across the monorepo via Turbo.
 
-Note: `web` resolves workspace package types from `dist/*.d.ts`, so on a clean checkout you may need to run `npm run build` first.
+Note: `web` resolves workspace package types from `dist/*.d.ts`, so on a clean checkout you may need to run `npm run build` first. CI runs type-check in the **Build** job after `npm run build` for the same reason.
+
+## CI
+
+GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main` and on pull request open/sync. Three jobs must pass:
+
+| Check | Job | Steps |
+|-------|-----|-------|
+| **Build** | `build` | `npm run build` → artifact report → upload `web-dist` → `npm run type-check` |
+| **Lint and Test** | `quality` | `format-and-lint` → `test-coverage` (runs in parallel with `build`) |
+| **E2E Tests** | `e2e` | `needs: build` → download `web-dist` → Playwright → `test:e2e --workspace=web` |
+
+E2E details (preview server, snapshots, local CI mimic): [`apps/web/README.md`](apps/web/README.md).
 
 ## Troubleshooting
 
