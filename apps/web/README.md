@@ -1,10 +1,55 @@
-# `web`
+# `web` — host application
 
-Host app for the modular monolith demo. Mounts `@repo/product`, `@repo/buy-box`, and `@repo/cart` without wiring cart state between packages.
+Thin **host** for the modular monolith demo. It composes feature packages into one Vite app and owns only layout chrome—not product, offer, or cart business logic.
 
-Unit tests live in Vitest (`npm run test`). End-to-end tests use [Playwright](https://playwright.dev/) and run separately via `test:e2e`.
+## What this app does
 
-## E2E tests
+- Mounts **`<Product />`** and **`<BuyBox />`** in the main grid ([`src/components/App.tsx`](src/components/App.tsx))
+- Mounts **`<Cart />`** in the header ([`src/components/Header.tsx`](src/components/Header.tsx))
+- Renders host-owned UI: breadcrumb, logo, footer, global styles ([`src/styles.css`](src/styles.css))
+
+## What this app deliberately does not do
+
+- Wire cart state or callbacks between packages
+- Fetch product or offer data (feature packages simulate that on mount)
+- Import feature internals—only the public entry points below
+
+Add-to-cart crosses package boundaries via **document pub/sub** (buy-box publishes, cart subscribes). See [packages/buy-box/README.md](../../packages/buy-box/README.md) and [packages/cart/README.md](../../packages/cart/README.md).
+
+## Dependencies
+
+| Package | Role in `web` |
+|---------|----------------|
+| [`@repo/product`](../../packages/product) | Product gallery and details |
+| [`@repo/buy-box`](../../packages/buy-box) | Offer, quantity, add to cart |
+| [`@repo/cart`](../../packages/cart) | Header cart |
+| [`@repo/config`](../../packages/config) | Tailwind theme + TypeScript presets |
+
+Import feature code only from package roots, for example:
+
+```ts
+import { Product } from "@repo/product";
+import { BuyBox } from "@repo/buy-box";
+import { Cart } from "@repo/cart";
+```
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `dev` | Vite dev server |
+| `build` | `tsc` + production bundle to `dist/` |
+| `preview` | Serve `dist/` on port 5173 (used by CI E2E) |
+| `test` | Vitest unit tests |
+| `test:e2e` | Playwright (see below) |
+| `test:e2e:ui` | Playwright UI mode (local only) |
+| `test:e2e:update-snapshots` | Regenerate `@visual` baselines |
+
+From the **repo root**, prefer `npm run dev` / `npm run build` / `npm run test:e2e` so Turbo builds workspace packages first.
+
+Unit tests use Vitest. End-to-end tests use [Playwright](https://playwright.dev/) in a separate suite.
+
+## E2E testing
 
 Playwright drives the full app in a real browser against `http://localhost:5173`. Tests cover product page flows, cart pub/sub integration, and visual regression snapshots.
 
@@ -126,3 +171,11 @@ The Playwright HTML report is uploaded as an artifact on failure.
 **Snapshot mismatch locally but passes in CI (or vice versa):** Baselines were likely generated against the wrong server mode. Regenerate with `CI=true` after `npm run build`.
 
 **Missing browsers:** Run `npx playwright install --with-deps` from `apps/web`.
+
+## See also
+
+- [Root README](../../README.md)
+- [`@repo/product`](../../packages/product/README.md)
+- [`@repo/buy-box`](../../packages/buy-box/README.md)
+- [`@repo/cart`](../../packages/cart/README.md)
+- [`@repo/config`](../../packages/config/README.md)
