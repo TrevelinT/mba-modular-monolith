@@ -1,8 +1,14 @@
-import { getProductPage } from "../api/product";
 import { ProductView } from "./product-view";
+import { ProductViewSkeleton } from "./product-view-skeleton";
+import { useProductPage } from "./use-product-page";
 
 function ProductContainer() {
-	const page = getProductPage();
+	const { page, isLoading } = useProductPage();
+
+	if (isLoading || page === null) {
+		return <ProductViewSkeleton />;
+	}
+
 	return (
 		<ProductView
 			title={page.title}

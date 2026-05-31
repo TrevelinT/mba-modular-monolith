@@ -1,11 +1,16 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import type { ProductPage } from "../api/product";
 import { getProductPage } from "../api/product";
 import { ProductView } from "./product-view";
 
-const page = getProductPage();
+let page: ProductPage;
 
 describe("ProductView", () => {
+	beforeAll(async function loadProductPage() {
+		page = await getProductPage({ latencyMs: 0 });
+	});
+
 	afterEach(function cleanupDom() {
 		cleanup();
 	});

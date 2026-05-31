@@ -1,9 +1,14 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import type { ProductPhoto } from "../api/product";
 import { getProductPage } from "../api/product";
 import { ImageCarousel } from "./image-carousel";
 
-const PHOTOS = getProductPage().photos;
+let PHOTOS: ProductPhoto[];
+
+function thumbnailButtonName(photo: ProductPhoto): string {
+	return `Nintendo Switch 2 - ${photo.label}`;
+}
 
 function mockMatchMedia(canHover: boolean) {
 	let matches = canHover;
@@ -45,6 +50,11 @@ function mockMatchMedia(canHover: boolean) {
 }
 
 describe("ImageCarousel", () => {
+	beforeAll(async function loadProductPhotos() {
+		const page = await getProductPage({ latencyMs: 0 });
+		PHOTOS = page.photos;
+	});
+
 	afterEach(function cleanupDom() {
 		cleanup();
 	});
@@ -59,7 +69,7 @@ describe("ImageCarousel", () => {
 		expect(mainImage).toHaveAttribute("src", PHOTOS[0].src);
 
 		const frontThumbnail = screen.getByRole("button", {
-			name: /front view/i,
+			name: thumbnailButtonName(PHOTOS[0]),
 		});
 		expect(frontThumbnail).toHaveClass("border-primary", "border-2");
 		expect(frontThumbnail).toHaveAttribute("aria-current", "true");
@@ -69,7 +79,9 @@ describe("ImageCarousel", () => {
 		mockMatchMedia(false);
 		render(<ImageCarousel photos={PHOTOS} />);
 
-		const sideThumbnail = screen.getByRole("button", { name: /side view/i });
+		const sideThumbnail = screen.getByRole("button", {
+			name: thumbnailButtonName(PHOTOS[1]),
+		});
 		fireEvent.click(sideThumbnail);
 
 		const mainImage = screen.getByRole("img", {
@@ -80,7 +92,7 @@ describe("ImageCarousel", () => {
 		expect(sideThumbnail).toHaveAttribute("aria-current", "true");
 
 		const frontThumbnail = screen.getByRole("button", {
-			name: /front view/i,
+			name: thumbnailButtonName(PHOTOS[0]),
 		});
 		expect(frontThumbnail).not.toHaveAttribute("aria-current");
 	});
@@ -90,7 +102,7 @@ describe("ImageCarousel", () => {
 		render(<ImageCarousel photos={PHOTOS} />);
 
 		const dockedThumbnail = screen.getByRole("button", {
-			name: /docked view/i,
+			name: thumbnailButtonName(PHOTOS[2]),
 		});
 		fireEvent.mouseEnter(dockedThumbnail);
 
@@ -105,7 +117,9 @@ describe("ImageCarousel", () => {
 		mockMatchMedia(false);
 		render(<ImageCarousel photos={PHOTOS} />);
 
-		const sideThumbnail = screen.getByRole("button", { name: /side view/i });
+		const sideThumbnail = screen.getByRole("button", {
+			name: thumbnailButtonName(PHOTOS[1]),
+		});
 		fireEvent.mouseEnter(sideThumbnail);
 
 		const mainImage = screen.getByRole("img", {

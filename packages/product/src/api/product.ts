@@ -20,6 +20,10 @@ export interface ProductPage {
 	badge?: string;
 }
 
+export interface GetProductPageOptions {
+	latencyMs?: number;
+}
+
 const PRODUCT_PHOTOS: ProductPhoto[] = [
 	{
 		src: "https://cdn.awsli.com.br/600x450/2443/2443989/produto/366571198/63388ed8cf5558ee164d38ad715b2266-5oolcqzk74.jpg",
@@ -44,7 +48,7 @@ const PRODUCT_PHOTOS: ProductPhoto[] = [
 	},
 ];
 
-export function getProductPage(): ProductPage {
+function buildProductPage(): ProductPage {
 	return {
 		id: PRODUCT_ID,
 		title: "Nintendo Switch 2 - Bundle Mario Kart World",
@@ -54,4 +58,12 @@ export function getProductPage(): ProductPage {
 		reviews: { rating: 4.5, count: 2451 },
 		badge: "Mais Vendido",
 	};
+}
+
+export async function getProductPage(
+	options: GetProductPageOptions = {},
+): Promise<ProductPage> {
+	const { latencyMs = 300 } = options;
+	await new Promise((resolve) => setTimeout(resolve, latencyMs));
+	return buildProductPage();
 }

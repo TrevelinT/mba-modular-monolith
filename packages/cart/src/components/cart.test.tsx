@@ -96,7 +96,7 @@ describe("Cart", () => {
 			screen.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
 		).toBeInTheDocument();
 		expect(screen.getByText("Quantidade: 2")).toBeInTheDocument();
-		const lineTotal = formatPrice(499.99 * 2);
+		const lineTotal = formatPrice(4099.99 * 2);
 		expect(
 			screen.getAllByText((_, element) => element?.textContent === lineTotal),
 		).toHaveLength(2);

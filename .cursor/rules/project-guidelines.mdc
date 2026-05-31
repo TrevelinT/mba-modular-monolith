@@ -79,6 +79,51 @@ sequenceDiagram
   Cart->>Cart: addToCart merge lines
 ```
 
+## Product async data fetching
+
+**Purpose:** `@repo/product` simulates a backend fetch; the host mounts `<Product />` and does not orchestrate loading.
+
+**API layer** (`packages/product/src/api/product.ts`):
+
+- `getProductPage(options?: GetProductPageOptions): Promise<ProductPage>` — options object (not positional args); default `latencyMs: 300`.
+- Exported via `productAPI` namespace (`GetProductPageOptions`, `ProductPage`, …).
+
+**Fetch hook** (`packages/product/src/components/use-product-page.ts`):
+
+- `useProductPage()` → `{ page, isLoading }` — **internal only**; the swap point for React Query / SWR later.
+- Uses `useState` + `useEffect`; cancelled flag for Strict Mode; calls `getProductPage()` with defaults.
+
+**UI wiring:**
+
+- `ProductContainer` calls `useProductPage()` only — no fetch logic in the container.
+- While loading → `ProductViewSkeleton` (internal); loaded → `ProductView`.
+
+**Tests:** pass `getProductPage({ latencyMs: 0 })` to skip simulated delay.
+
+**When changing:** update `src/api/product.ts`, hook/container/skeleton, package tests, and this guidelines section.
+
+**Do not:**
+
+- Fetch product data in `apps/web`.
+- Export `useProductPage` or skeleton from `src/index.ts`.
+- Add positional args to `getProductPage`.
+
+```mermaid
+sequenceDiagram
+  participant Container as ProductContainer
+  participant Hook as useProductPage
+  participant API as getProductPage
+  participant Skeleton as ProductViewSkeleton
+  participant View as ProductView
+  Container->>Hook: useProductPage
+  Hook->>Skeleton: page is null
+  Hook->>API: await on mount
+  Note over API: simulated delay
+  API-->>Hook: ProductPage
+  Hook-->>Container: page
+  Container->>View: props
+```
+
 ## Feature package public API
 
 **Single entry point for consumers.** Host apps and other packages import only from `@repo/{package}` (not `@repo/{package}/api`, `@repo/{package}/components`, or deep file paths).
@@ -107,7 +152,7 @@ sequenceDiagram
 
 | Package | Component export | API namespace | Key symbols |
 |---|---|---|---|
-| `@repo/product` | `Product` (`ProductContainer`) | `productAPI` | `getProductPage`, `PRODUCT_ID`, … |
+| `@repo/product` | `Product` (`ProductContainer`) | `productAPI` | `getProductPage`, `GetProductPageOptions`, `PRODUCT_ID`, … |
 | `@repo/buy-box` | `BuyBox` (`BuyBoxContainer`) | `buyBoxAPI` | `getOffer`, `OFFER_PRODUCT_ID`, `publishAddToCart`, … |
 | `@repo/cart` | `Cart` (`CartContainer`) | `cartAPI` | `subscribeToCart`, `getCartItems`, `CATALOG_PRODUCT_ID`, … |
 

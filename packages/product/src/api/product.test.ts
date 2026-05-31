@@ -6,8 +6,8 @@ describe("product API", () => {
 		expect(PRODUCT_ID).toBe("nintendo-switch-2");
 	});
 
-	it("getProductPage returns product metadata", () => {
-		const page = getProductPage();
+	it("getProductPage returns product metadata", async () => {
+		const page = await getProductPage({ latencyMs: 0 });
 		expect(page.id).toBe(PRODUCT_ID);
 		expect(page.title).toContain("Nintendo Switch 2");
 		expect(page.description.length).toBeGreaterThan(0);
@@ -18,6 +18,6 @@ describe("product API", () => {
 			label: expect.any(String),
 		});
 		expect(page.reviews).toEqual({ rating: 4.5, count: 2451 });
-		expect(page.badge).toBe("Pre-order");
+		expect(page.badge).toBe("Mais Vendido");
 	});
 });

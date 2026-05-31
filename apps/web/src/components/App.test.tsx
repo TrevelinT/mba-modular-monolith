@@ -16,7 +16,7 @@ describe("App", () => {
 		render(<App />);
 
 		expect(
-			screen.getByRole("button", { name: "Shopping cart, empty" }),
+			screen.getByRole("button", { name: "Carrinho de compras, vazio" }),
 		).toBeInTheDocument();
 
 		fireEvent.click(
@@ -24,7 +24,7 @@ describe("App", () => {
 		);
 
 		expect(
-			screen.getByRole("button", { name: "Shopping cart, 1 item" }),
+			screen.getByRole("button", { name: "Carrinho de compras, 1 item" }),
 		).toBeInTheDocument();
 	});
 });

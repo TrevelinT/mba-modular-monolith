@@ -17,7 +17,7 @@ describe("catalog", () => {
 	it("returns a catalog item for CATALOG_PRODUCT_ID", () => {
 		const item = getCatalogItem(CATALOG_PRODUCT_ID);
 		expect(item).toBeDefined();
-		expect(item?.unitPrice).toBe(499.99);
+		expect(item?.unitPrice).toBe(4099.99);
 	});
 
 	it("addToCart merges lines by productId", () => {
@@ -49,7 +49,7 @@ describe("catalog", () => {
 		});
 		expect(getCartSummary(items)).toEqual({
 			itemCount: 2,
-			subtotal: 999.98,
+			subtotal: 8199.98,
 		});
 	});
 });
