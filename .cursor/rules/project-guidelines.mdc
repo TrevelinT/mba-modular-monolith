@@ -79,48 +79,46 @@ sequenceDiagram
   Cart->>Cart: addToCart merge lines
 ```
 
-## Product async data fetching
+## Feature async data fetching (product & buy-box)
 
-**Purpose:** `@repo/product` simulates a backend fetch; the host mounts `<Product />` and does not orchestrate loading.
+**Purpose:** `@repo/product` and `@repo/buy-box` each simulate a backend fetch. The host mounts `<Product />` and `<BuyBox />` only — it does not orchestrate loading or pass fetched data between packages.
 
-**API layer** (`packages/product/src/api/product.ts`):
+**Shared pattern:**
 
-- `getProductPage(options?: GetProductPageOptions): Promise<ProductPage>` — options object (not positional args); default `latencyMs: 300`.
-- Exported via `productAPI` namespace (`GetProductPageOptions`, `ProductPage`, …).
+- **API:** `get*(options?: Get*Options): Promise<*>` — options object (not positional args); default `latencyMs: 300`. Exported via `{package}API` namespace.
+- **Hook (internal):** `use*()` → `{ data, isLoading }` where `data` is `null` until resolved. `useState` + `useEffect` with a cancelled flag for Strict Mode; calls the API with defaults. Swap point for React Query / SWR later.
+- **Container:** calls the hook only — no fetch logic in the container.
+- **Loading UI:** internal `{Name}ViewSkeleton`; loaded → `{Name}View`.
+- **Tests:** pass `{ latencyMs: 0 }` to skip simulated delay.
 
-**Fetch hook** (`packages/product/src/components/use-product-page.ts`):
+| Package | API | Options / return | Hook | Container | Skeleton | View |
+|---------|-----|-------------------|------|-----------|----------|------|
+| `@repo/product` | `getProductPage` | `GetProductPageOptions` → `ProductPage` | `useProductPage` → `{ page, isLoading }` | `ProductContainer` | `ProductViewSkeleton` | `ProductView` |
+| `@repo/buy-box` | `getOffer` | `GetOfferOptions` → `Offer` | `useOffer` → `{ offer, isLoading }` | `BuyBoxContainer` | `BuyBoxViewSkeleton` | `BuyBoxView` |
 
-- `useProductPage()` → `{ page, isLoading }` — **internal only**; the swap point for React Query / SWR later.
-- Uses `useState` + `useEffect`; cancelled flag for Strict Mode; calls `getProductPage()` with defaults.
+**Files:** [`packages/product/src/api/product.ts`](packages/product/src/api/product.ts), [`packages/product/src/components/use-product-page.ts`](packages/product/src/components/use-product-page.ts), [`packages/buy-box/src/api/offer.ts`](packages/buy-box/src/api/offer.ts), [`packages/buy-box/src/components/use-offer.ts`](packages/buy-box/src/components/use-offer.ts).
 
-**UI wiring:**
-
-- `ProductContainer` calls `useProductPage()` only — no fetch logic in the container.
-- While loading → `ProductViewSkeleton` (internal); loaded → `ProductView`.
-
-**Tests:** pass `getProductPage({ latencyMs: 0 })` to skip simulated delay.
-
-**When changing:** update `src/api/product.ts`, hook/container/skeleton, package tests, and this guidelines section.
+**When changing:** update the package `src/api/*`, hook/container/skeleton, package tests, and this section.
 
 **Do not:**
 
-- Fetch product data in `apps/web`.
-- Export `useProductPage` or skeleton from `src/index.ts`.
-- Add positional args to `getProductPage`.
+- Fetch product or offer data in `apps/web`.
+- Export hooks or skeletons from `src/index.ts`.
+- Add positional args to `getProductPage` or `getOffer`.
 
 ```mermaid
 sequenceDiagram
-  participant Container as ProductContainer
-  participant Hook as useProductPage
-  participant API as getProductPage
-  participant Skeleton as ProductViewSkeleton
-  participant View as ProductView
-  Container->>Hook: useProductPage
-  Hook->>Skeleton: page is null
+  participant Container as FeatureContainer
+  participant Hook as useFeatureData
+  participant API as getFeatureData
+  participant Skeleton as FeatureViewSkeleton
+  participant View as FeatureView
+  Container->>Hook: useFeatureData
+  Hook->>Skeleton: data is null
   Hook->>API: await on mount
-  Note over API: simulated delay
-  API-->>Hook: ProductPage
-  Hook-->>Container: page
+  Note over API: simulated delay default 300ms
+  API-->>Hook: data
+  Hook-->>Container: data
   Container->>View: props
 ```
 
@@ -153,7 +151,7 @@ sequenceDiagram
 | Package | Component export | API namespace | Key symbols |
 |---|---|---|---|
 | `@repo/product` | `Product` (`ProductContainer`) | `productAPI` | `getProductPage`, `GetProductPageOptions`, `PRODUCT_ID`, … |
-| `@repo/buy-box` | `BuyBox` (`BuyBoxContainer`) | `buyBoxAPI` | `getOffer`, `OFFER_PRODUCT_ID`, `publishAddToCart`, … |
+| `@repo/buy-box` | `BuyBox` (`BuyBoxContainer`) | `buyBoxAPI` | `getOffer`, `GetOfferOptions`, `OFFER_PRODUCT_ID`, `publishAddToCart`, … |
 | `@repo/cart` | `Cart` (`CartContainer`) | `cartAPI` | `subscribeToCart`, `getCartItems`, `CATALOG_PRODUCT_ID`, … |
 
 **Host examples:** `import { Product, productAPI } from "@repo/product"` and `import { BuyBox, buyBoxAPI } from "@repo/buy-box"` in [`apps/web/src/components/App.tsx`](apps/web/src/components/App.tsx).

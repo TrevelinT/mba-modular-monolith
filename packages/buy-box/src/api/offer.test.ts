@@ -7,8 +7,8 @@ describe("offer API", () => {
 		expect(OFFER_PRODUCT_ID).toBe("nintendo-switch-2");
 	});
 
-	it("getOffer returns offer metadata", () => {
-		const offer = getOffer();
+	it("getOffer returns offer metadata", async () => {
+		const offer = await getOffer({ latencyMs: 0 });
 		expect(offer.productId).toBe(OFFER_PRODUCT_ID);
 		expect(offer.salePrice).toBe(4099.99);
 		expect(offer.listPrice).toBe(4499.99);

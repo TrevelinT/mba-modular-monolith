@@ -11,7 +11,11 @@ export interface Offer {
 	installmentText: string;
 }
 
-export function getOffer(): Offer {
+export interface GetOfferOptions {
+	latencyMs?: number;
+}
+
+function buildOffer(): Offer {
 	const salePrice = 4099.99;
 	const listPrice = 4499.99;
 	const installmentAmount = salePrice / INSTALLMENT_COUNT;
@@ -22,4 +26,10 @@ export function getOffer(): Offer {
 		listPrice,
 		installmentText: `ou ${INSTALLMENT_COUNT}x de ${formatPrice(installmentAmount)} sem juros`,
 	};
+}
+
+export async function getOffer(options: GetOfferOptions = {}): Promise<Offer> {
+	const { latencyMs = 300 } = options;
+	await new Promise((resolve) => setTimeout(resolve, latencyMs));
+	return buildOffer();
 }

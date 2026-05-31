@@ -1,12 +1,17 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { formatPrice } from "../api/format-price";
+import type { Offer } from "../api/offer";
 import { getOffer } from "../api/offer";
 import { BuyBoxView } from "./buy-box-view";
 
-const offer = getOffer();
+let offer: Offer;
 
 describe("BuyBoxView", () => {
+	beforeAll(async () => {
+		offer = await getOffer({ latencyMs: 0 });
+	});
+
 	afterEach(function cleanupDom() {
 		cleanup();
 	});

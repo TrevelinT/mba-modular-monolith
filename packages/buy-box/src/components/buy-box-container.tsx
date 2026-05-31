@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { getOffer, OFFER_PRODUCT_ID } from "../api/offer";
+import { OFFER_PRODUCT_ID } from "../api/offer";
 import { publishAddToCart } from "../api/publish-add-to-cart";
 import { BuyBoxView } from "./buy-box-view";
+import { BuyBoxViewSkeleton } from "./buy-box-view-skeleton";
+import { useOffer } from "./use-offer";
 
 function BuyBoxContainer() {
-	const offer = getOffer();
+	const { offer, isLoading } = useOffer();
 	const [quantity, setQuantity] = useState(1);
 
 	function handleDecreaseQuantity() {
@@ -17,6 +19,10 @@ function BuyBoxContainer() {
 
 	function handlePreOrder() {
 		publishAddToCart({ productId: OFFER_PRODUCT_ID, quantity });
+	}
+
+	if (isLoading || offer === null) {
+		return <BuyBoxViewSkeleton />;
 	}
 
 	return (
