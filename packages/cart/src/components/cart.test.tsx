@@ -80,7 +80,7 @@ describe("Cart", () => {
 		).toHaveAttribute("aria-hidden", "true");
 	});
 
-	it("updates badge and line items when add-to-cart event is published", () => {
+	it("updates badge and line items when add-to-cart event is published", async () => {
 		mockMatchMedia(false);
 		render(<CartContainer />);
 
@@ -93,7 +93,9 @@ describe("Cart", () => {
 		});
 
 		expect(
-			screen.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
+			await screen.findByRole("button", {
+				name: "Carrinho de compras, 2 itens",
+			}),
 		).toBeInTheDocument();
 		expect(screen.getByText("Quantidade: 2")).toBeInTheDocument();
 		const lineTotal = formatPrice(4099.99 * 2);

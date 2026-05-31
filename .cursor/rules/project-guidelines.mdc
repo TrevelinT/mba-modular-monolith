@@ -75,15 +75,15 @@ sequenceDiagram
   BuyBox->>Doc: dispatchEvent cart:add-item
   Note over BuyBox: detail productId qty
   Doc->>Cart: subscribeToCart handler
-  Cart->>Cart: getCatalogItem productId
+  Cart->>Cart: await getCatalogItem productId
   Cart->>Cart: addToCart merge lines
 ```
 
-## Feature async data fetching (product & buy-box)
+## Feature async data fetching (product, buy-box & cart)
 
-**Purpose:** `@repo/product` and `@repo/buy-box` each simulate a backend fetch. The host mounts `<Product />` and `<BuyBox />` only — it does not orchestrate loading or pass fetched data between packages.
+**Purpose:** `@repo/product` and `@repo/buy-box` simulate a backend fetch on mount. `@repo/cart` simulates async catalog lookup on add-to-cart (pub/sub path). The host mounts `<Product />`, `<BuyBox />`, and `<Cart />` only — it does not orchestrate loading or pass fetched data between packages.
 
-**Shared pattern:**
+**Shared pattern (product & buy-box):**
 
 - **API:** `get*(options?: Get*Options): Promise<*>` — options object (not positional args); default `latencyMs: 300`. Exported via `{package}API` namespace.
 - **Hook (internal):** `use*()` → `{ data, isLoading }` where `data` is `null` until resolved. `useState` + `useEffect` with a cancelled flag for Strict Mode; calls the API with defaults. Swap point for React Query / SWR later.
@@ -91,20 +91,29 @@ sequenceDiagram
 - **Loading UI:** internal `{Name}ViewSkeleton`; loaded → `{Name}View`.
 - **Tests:** pass `{ latencyMs: 0 }` to skip simulated delay.
 
-| Package | API | Options / return | Hook | Container | Skeleton | View |
-|---------|-----|-------------------|------|-----------|----------|------|
+**Cart pattern (catalog on mutation, not mount fetch):**
+
+- **API:** `getCatalogItem(productId, options?: GetCatalogItemOptions): Promise<CatalogItem | undefined>` — default `latencyMs: 300`. `addToCart(items, command, catalogItem)` stays **sync** (pure merge; no options).
+- **Store:** `cart-store` awaits `getCatalogItem`, then calls sync `addToCart`; serializes concurrent adds via a promise chain.
+- **React bridge:** `subscribeToCartStore` + `useSyncExternalStore` — **not** a mount hook.
+- **Tests:** `getCatalogItem(..., { latencyMs: 0 })` for fetch; sync `addToCart` with fixture `CatalogItem`; store/component tests use `waitFor` / `findBy*`.
+
+| Package | API | Options / return | Hook / bridge | Container | Skeleton | View |
+|---------|-----|-------------------|---------------|-----------|----------|------|
 | `@repo/product` | `getProductPage` | `GetProductPageOptions` → `ProductPage` | `useProductPage` → `{ page, isLoading }` | `ProductContainer` | `ProductViewSkeleton` | `ProductView` |
 | `@repo/buy-box` | `getOffer` | `GetOfferOptions` → `Offer` | `useOffer` → `{ offer, isLoading }` | `BuyBoxContainer` | `BuyBoxViewSkeleton` | `BuyBoxView` |
+| `@repo/cart` | `getCatalogItem` | `GetCatalogItemOptions` → `CatalogItem \| undefined` | `subscribeToCartStore` + `useSyncExternalStore` | `CartContainer` | — | `CartView` |
 
-**Files:** [`packages/product/src/api/product.ts`](packages/product/src/api/product.ts), [`packages/product/src/components/use-product-page.ts`](packages/product/src/components/use-product-page.ts), [`packages/buy-box/src/api/offer.ts`](packages/buy-box/src/api/offer.ts), [`packages/buy-box/src/components/use-offer.ts`](packages/buy-box/src/components/use-offer.ts).
+**Files:** [`packages/product/src/api/product.ts`](packages/product/src/api/product.ts), [`packages/product/src/components/use-product-page.ts`](packages/product/src/components/use-product-page.ts), [`packages/buy-box/src/api/offer.ts`](packages/buy-box/src/api/offer.ts), [`packages/buy-box/src/components/use-offer.ts`](packages/buy-box/src/components/use-offer.ts), [`packages/cart/src/api/catalog.ts`](packages/cart/src/api/catalog.ts), [`packages/cart/src/api/cart-store.ts`](packages/cart/src/api/cart-store.ts).
 
-**When changing:** update the package `src/api/*`, hook/container/skeleton, package tests, and this section.
+**When changing:** update the package `src/api/*`, hook/container/skeleton (or cart store), package tests, and this section.
 
 **Do not:**
 
 - Fetch product or offer data in `apps/web`.
 - Export hooks or skeletons from `src/index.ts`.
-- Add positional args to `getProductPage` or `getOffer`.
+- Add positional args to `getProductPage`, `getOffer`, or `getCatalogItem`.
+- Pass `latencyMs` through `addToCart`.
 
 ```mermaid
 sequenceDiagram

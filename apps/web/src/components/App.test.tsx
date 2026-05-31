@@ -24,7 +24,9 @@ describe("App", () => {
 		);
 
 		expect(
-			screen.getByRole("button", { name: "Carrinho de compras, 1 item" }),
+			await screen.findByRole("button", {
+				name: "Carrinho de compras, 1 item",
+			}),
 		).toBeInTheDocument();
 	});
 });

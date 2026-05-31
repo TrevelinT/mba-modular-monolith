@@ -16,6 +16,10 @@ export interface CartLineItem {
 	unitPrice: number;
 }
 
+export interface GetCatalogItemOptions {
+	latencyMs?: number;
+}
+
 const catalog: Record<string, CatalogItem> = {
 	[CATALOG_PRODUCT_ID]: {
 		name: "Nintendo Switch 2 - Bundle Mario Kart World",
@@ -25,19 +29,24 @@ const catalog: Record<string, CatalogItem> = {
 	},
 };
 
-export function getCatalogItem(productId: string): CatalogItem | undefined {
+function lookupCatalogItem(productId: string): CatalogItem | undefined {
 	return catalog[productId];
+}
+
+export async function getCatalogItem(
+	productId: string,
+	options: GetCatalogItemOptions = {},
+): Promise<CatalogItem | undefined> {
+	const { latencyMs = 300 } = options;
+	await new Promise((resolve) => setTimeout(resolve, latencyMs));
+	return lookupCatalogItem(productId);
 }
 
 export function addToCart(
 	items: CartLineItem[],
 	command: AddToCartCommand,
+	catalogItem: CatalogItem,
 ): CartLineItem[] {
-	const catalogItem = getCatalogItem(command.productId);
-	if (!catalogItem) {
-		return items;
-	}
-
 	const existingIndex = items.findIndex(
 		(item) => item.productId === command.productId,
 	);
