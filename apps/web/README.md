@@ -109,9 +109,9 @@ Snapshot settings in config: `animations: "disabled"`, `maxDiffPixelRatio: 0.01`
 
 ### CI
 
-CI uses three jobs — see the root [`README.md`](../../README.md#ci) for the full workflow. The **E2E Tests** job:
+CI uses two jobs — see the root [`README.md`](../../README.md#ci) for the full workflow. The **E2E Tests** job:
 
-1. Waits on the **Build** job (`needs: build`)
+1. Waits on the **Build and Quality** job (`needs: build`)
 2. Downloads the `web-dist` artifact into `apps/web/dist/`
 3. Installs browsers from `apps/web`
 4. Runs `npm run test:e2e --workspace=web` (not root `npm run test:e2e`) so Turbo does not rebuild
