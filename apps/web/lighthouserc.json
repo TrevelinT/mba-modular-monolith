@@ -1,0 +1,13 @@
+{
+	"ci": {
+		"collect": {
+			"staticDistDir": "./apps/web/dist",
+			"isSinglePageApplication": true,
+			"numberOfRuns": 1,
+			"puppeteerScript": "./apps/web/scripts/lighthouse-wait-for-content.cjs",
+			"puppeteerLaunchOptions": {
+				"args": ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
+			}
+		}
+	}
+}

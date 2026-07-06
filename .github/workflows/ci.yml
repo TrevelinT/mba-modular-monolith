@@ -98,3 +98,40 @@ jobs:
         with:
           name: playwright-report
           path: apps/web/playwright-report/
+
+  lighthouse:
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: web-dist
+          path: apps/web/dist/
+
+      - name: Audit with Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./apps/web/lighthouserc.json
+          budgetPath: ./apps/web/budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          runs: 1
