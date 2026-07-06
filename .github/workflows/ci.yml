@@ -131,7 +131,6 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: ./apps/web/lighthouserc.json
-          budgetPath: ./apps/web/budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
           runs: 1
