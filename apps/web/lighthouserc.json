@@ -10,11 +10,7 @@
 			}
 		},
 		"assert": {
-			"preset": "lighthouse:no-pwa",
-			"assertions": {
-				"is-crawlable": "off",
-				"robots-txt": "off"
-			}
+			"preset": "lighthouse:no-pwa"
 		}
 	}
 }
