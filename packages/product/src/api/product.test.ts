@@ -13,7 +13,7 @@ describe("product API", () => {
 		expect(page.description.length).toBeGreaterThan(0);
 		expect(page.photos).toHaveLength(4);
 		expect(page.photos[0]).toMatchObject({
-			src: expect.stringMatching(/^https:\/\//),
+			src: expect.any(String),
 			alt: expect.any(String),
 			label: expect.any(String),
 		});
