@@ -48,7 +48,10 @@ function ImageCarousel({ photos }: ImageCarouselProps) {
 				<img
 					alt={selectedImage.alt}
 					className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+					fetchPriority="high"
+					height={selectedImage.height}
 					src={selectedImage.src}
+					width={selectedImage.width}
 				/>
 			</div>
 			<div className="grid grid-cols-4 gap-sm">
@@ -76,7 +79,10 @@ function ImageCarousel({ photos }: ImageCarouselProps) {
 							<img
 								alt=""
 								className="w-full h-full object-cover"
-								src={image.src}
+								height={90}
+								loading="lazy"
+								src={image.thumbSrc}
+								width={90}
 							/>
 						</button>
 					);
