@@ -108,7 +108,7 @@ Open the dev URL printed by Vite (typically `http://localhost:5173`).
 
 ## CI
 
-[GitHub Actions](https://docs.github.com/en/actions) ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main` and on pull request open/sync.
+[GitHub Actions](https://docs.github.com/en/actions) ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main`, on pull request open/sync, and on demand via **Run workflow** (`workflow_dispatch`) for manual metric collection (pick a branch; the run uses that branch’s tip).
 
 | Job | What runs |
 |-----|-----------|
