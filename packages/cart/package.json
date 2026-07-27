@@ -1,6 +1,7 @@
 {
 	"name": "@repo/cart",
 	"version": "0.0.0",
+	"private": true,
 	"sideEffects": [
 		"**/*.css"
 	],

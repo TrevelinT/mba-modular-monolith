@@ -4,9 +4,6 @@
 	"type": "module",
 	"private": true,
 	"license": "MIT",
-	"publishConfig": {
-		"access": "public"
-	},
 	"exports": {
 		"./tailwind": "./tailwind/shared-styles.css",
 		"./typescript/*": "./typescript/*"

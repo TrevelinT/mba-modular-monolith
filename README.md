@@ -103,6 +103,9 @@ Open the dev URL printed by Vite (typically `http://localhost:5173`).
 | `npm run test` | Vitest in all workspaces |
 | `npm run test:e2e` | Playwright (builds first via Turbo) |
 | `npm run test-coverage` | Unit tests + merged coverage report |
+| `npm run changeset` | Add a changeset (choose package + semver bump) |
+| `npm run version-packages` | Apply pending changesets (used by Release CI) |
+| `npm run release` | Create app-only GitHub tag/release `vX.Y.Z` (used by Release CI) |
 
 **Note:** On a clean checkout, run `npm run build` before `type-check` if `web` cannot resolve workspace types from `dist/*.d.ts`.
 
@@ -116,6 +119,32 @@ Open the dev URL printed by Vite (typically `http://localhost:5173`).
 | **E2E Tests** | `needs: build` → download `web-dist` → Playwright → `test:e2e --workspace=web` |
 
 E2E setup, preview server, and visual snapshots: [`apps/web/README.md`](apps/web/README.md).
+
+## Release
+
+Versions are managed with [Changesets](https://github.com/changesets/changesets). Packages version independently (`web`, `@repo/product`, `@repo/buy-box`, `@repo/cart`). `@repo/config` is ignored. There is **no npm publish**; deploy is separate.
+
+**GitHub tags are app-only:** a successful release creates a single tag/release `vX.Y.Z` from `apps/web`’s version. Feature packages get `CHANGELOG.md` updates but are not tagged.
+
+### When to add a changeset
+
+Include a changeset in any PR that should bump a version when merged. If you want a GitHub Release, include **`web`** in the changeset (alone or with feature packages).
+
+```sh
+npm run changeset
+```
+
+Pick the affected package(s), choose `patch` / `minor` / `major`, and write a short summary. Commit the generated `.changeset/*.md` file with the PR.
+
+### What happens on `main`
+
+1. Merge the feature PR (with changesets) to `main`.
+2. **CI** runs. Only if it succeeds does **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml)) start (`workflow_run`).
+3. Release opens or updates a **Version Packages** PR (bumps `package.json` versions, updates changelogs, removes consumed changesets).
+4. Review and merge that PR when you want to cut versions.
+5. CI runs again on `main`. On success, Release runs `npm run release`: if `web` was bumped and `v{version}` does not exist yet, it creates that GitHub tag and Release from `apps/web/CHANGELOG.md`.
+
+Package-only version bumps still update those packages; they just produce no GitHub tag until `web` is bumped.
 
 ## Troubleshooting
 
