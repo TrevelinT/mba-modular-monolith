@@ -14,7 +14,7 @@ function Header() {
 						className="h-full w-auto object-contain"
 						height={40}
 						src="/game-store-logo.svg"
-						width={160}
+						width={180}
 					/>
 				</a>
 				<Cart />
