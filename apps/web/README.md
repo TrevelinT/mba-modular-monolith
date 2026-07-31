@@ -51,7 +51,7 @@ Unit tests use Vitest. End-to-end tests use [Playwright](https://playwright.dev/
 
 ## E2E testing
 
-Playwright drives the full app in a real browser against `http://localhost:5173`. Tests cover product page flows, cart pub/sub integration, and visual regression snapshots.
+Playwright drives the full app in a real browser against `http://localhost:5173/mba-modular-monolith/`. Tests cover product page flows, cart pub/sub integration, and visual regression snapshots.
 
 ### Prerequisites
 

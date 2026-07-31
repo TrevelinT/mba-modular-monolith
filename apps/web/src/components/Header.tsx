@@ -7,13 +7,13 @@ function Header() {
 				<a
 					aria-label="Go to homepage"
 					className="block h-10 text-on-surface"
-					href="/"
+					href={import.meta.env.BASE_URL}
 				>
 					<img
 						alt="Game Store"
 						className="h-full w-auto object-contain"
 						height={40}
-						src="/game-store-logo.svg"
+						src={`${import.meta.env.BASE_URL}game-store-logo.svg`}
 						width={180}
 					/>
 				</a>

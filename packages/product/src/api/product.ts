@@ -29,24 +29,24 @@ export interface GetProductPageOptions {
 
 const PRODUCT_PHOTOS: ProductPhoto[] = [
 	{
-		src: "/images/nintendo-switch-2-image-01.webp",
-		thumbSrc: "/images/nintendo-switch-2-image-01-thumb.webp",
+		src: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-01.webp`,
+		thumbSrc: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-01-thumb.webp`,
 		alt: "Bundle Nintendo Switch 2 com Mario Kart World",
 		label: "Bundle Nintendo Switch 2 com Mario Kart World",
 		width: 450,
 		height: 450,
 	},
 	{
-		src: "/images/nintendo-switch-2-image-02.webp",
-		thumbSrc: "/images/nintendo-switch-2-image-02-thumb.webp",
+		src: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-02.webp`,
+		thumbSrc: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-02-thumb.webp`,
 		alt: "Jogador com o Nintendo Switch 2 na mão",
 		label: "Jogador com o Nintendo Switch 2 na mão",
 		width: 800,
 		height: 800,
 	},
 	{
-		src: "/images/nintendo-switch-2-image-03.webp",
-		thumbSrc: "/images/nintendo-switch-2-image-03-thumb.webp",
+		src: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-03.webp`,
+		thumbSrc: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-03-thumb.webp`,
 		alt: "Comparação de tamanho entre o Nintendo Switch 2 e o Nintendo Switch (rumor)",
 		label:
 			"Comparação de tamanho entre o Nintendo Switch 2 e o Nintendo Switch (rumor)",
@@ -54,8 +54,8 @@ const PRODUCT_PHOTOS: ProductPhoto[] = [
 		height: 755,
 	},
 	{
-		src: "/images/nintendo-switch-2-image-04.webp",
-		thumbSrc: "/images/nintendo-switch-2-image-04-thumb.webp",
+		src: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-04.webp`,
+		thumbSrc: `${import.meta.env.BASE_URL}images/nintendo-switch-2-image-04-thumb.webp`,
 		alt: "Nintendo Switch 2 com joy-con vermelho e azul destacados",
 		label: "Nintendo Switch 2 com joy-con vermelho e azul destacados",
 		width: 515,

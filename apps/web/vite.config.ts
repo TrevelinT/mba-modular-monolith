@@ -73,6 +73,7 @@ function criticalPathPreloadHints(): Plugin {
 }
 
 export default defineConfig({
+	base: "/mba-modular-monolith/",
 	plugins: [react(), tailwindcss(), criticalPathPreloadHints()],
 	build: {
 		rollupOptions: {

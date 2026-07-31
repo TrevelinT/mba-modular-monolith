@@ -1,8 +1,9 @@
 {
 	"ci": {
 		"collect": {
-			"staticDistDir": "./apps/web/dist",
-			"isSinglePageApplication": true,
+			"startServerCommand": "npm run preview --workspace=web",
+			"startServerReadyPattern": "Local:",
+			"url": ["http://localhost:5173/mba-modular-monolith/"],
 			"numberOfRuns": 1,
 			"puppeteerScript": "./apps/web/scripts/lighthouse-wait-for-content.cjs",
 			"puppeteerLaunchOptions": {

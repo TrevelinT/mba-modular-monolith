@@ -143,6 +143,11 @@ Pick the affected package(s), choose `patch` / `minor` / `major`, and write a sh
 3. Release opens or updates a **Version Packages** PR (bumps `package.json` versions, updates changelogs, removes consumed changesets).
 4. Review and merge that PR when you want to cut versions.
 5. CI runs again on `main`. On success, Release runs `npm run release`: if `web` was bumped and `v{version}` does not exist yet, it creates that GitHub tag and Release from `apps/web/CHANGELOG.md`.
+6. **CD** ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) starts after Release succeeds. If a `v*` tag points at that commit, it reuses the CI `web-dist` artifact and deploys to GitHub Pages. Version Packages–only runs (no tag) are skipped.
+
+Live site: [https://trevelint.github.io/mba-modular-monolith/](https://trevelint.github.io/mba-modular-monolith/).
+
+**One-time repo setting:** Settings → Pages → Build and deployment → Source = **GitHub Actions** (not a branch).
 
 Package-only version bumps still update those packages; they just produce no GitHub tag until `web` is bumped.
 
