@@ -45,6 +45,9 @@ describe("BuyBoxView", () => {
 			),
 		).toBeInTheDocument();
 		expect(screen.getByRole("status")).toHaveTextContent("1");
+		expect(
+			screen.getByRole("group", { name: "Quantidade" }),
+		).toBeInTheDocument();
 	});
 
 	it("calls onIncreaseQuantity when increase button is clicked", () => {

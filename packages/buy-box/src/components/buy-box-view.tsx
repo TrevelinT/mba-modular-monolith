@@ -113,17 +113,11 @@ function BuyBoxView({
 						{installmentText}
 					</p>
 				</div>
-				<div className="flex flex-col gap-sm">
-					<label
-						className="font-label-md text-on-surface uppercase tracking-wider"
-						htmlFor="quantity"
-					>
+				<fieldset className="flex flex-col gap-sm m-0 min-w-0 border-0 p-0">
+					<legend className="font-label-md text-on-surface uppercase tracking-wider p-0">
 						Quantidade
-					</label>
-					<div
-						className="flex items-center w-full max-w-[140px] border border-outline-variant rounded"
-						id="quantity"
-					>
+					</legend>
+					<div className="flex items-center w-full max-w-[140px] border border-outline-variant rounded">
 						<button
 							aria-label="Diminuir quantidade"
 							className="p-2 hover:bg-surface-container transition-colors"
@@ -148,7 +142,7 @@ function BuyBoxView({
 							<PlusIcon />
 						</button>
 					</div>
-				</div>
+				</fieldset>
 				<div className="flex flex-col gap-md pt-base">
 					<button
 						className="w-full bg-primary-container hover:bg-primary py-lg rounded text-on-primary font-headline-md transition-all active:opacity-80"
@@ -166,19 +160,19 @@ function BuyBoxView({
 			<div className="grid grid-cols-3 gap-sm">
 				<div className="flex flex-col items-center text-center gap-xs">
 					<LocalShippingIcon />
-					<span className="text-[9px] font-bold uppercase text-secondary">
+					<span className="text-label-md font-bold uppercase text-secondary">
 						Entrega rápida
 					</span>
 				</div>
 				<div className="flex flex-col items-center text-center gap-xs">
 					<VerifiedUserIcon />
-					<span className="text-[9px] font-bold uppercase text-secondary">
+					<span className="text-label-md font-bold uppercase text-secondary">
 						Garantia de 2 anos
 					</span>
 				</div>
 				<div className="flex flex-col items-center text-center gap-xs">
 					<SyncIcon />
-					<span className="text-[9px] font-bold uppercase text-secondary">
+					<span className="text-label-md font-bold uppercase text-secondary">
 						Devolução fácil
 					</span>
 				</div>
