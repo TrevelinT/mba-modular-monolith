@@ -1,7 +1,0 @@
-TODOs:
-- Criar deploy automático para o github pages
-- Adicionar build apenas no que foi modificado e abrir um PR para isso (depois)
-- Adicionar worflow trigger para coletar as métricas necessárias
--
-PRs:
-- Criar funcionalidade de deletar produto do carrinho
