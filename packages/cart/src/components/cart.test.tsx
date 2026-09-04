@@ -4,6 +4,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
@@ -102,6 +103,45 @@ describe("Cart", () => {
 		expect(
 			screen.getAllByText((_, element) => element?.textContent === lineTotal),
 		).toHaveLength(2);
+	});
+
+	it("decrements quantity and removes the line when reaching zero", async () => {
+		mockMatchMedia(false);
+		render(<CartContainer />);
+
+		act(function dispatchAddToCart() {
+			document.dispatchEvent(
+				new CustomEvent(CART_ADD_ITEM_EVENT, {
+					detail: { productId: CATALOG_PRODUCT_ID, quantity: 2 },
+				}),
+			);
+		});
+
+		const cartButton = await screen.findByRole("button", {
+			name: "Carrinho de compras, 2 itens",
+		});
+		fireEvent.click(cartButton);
+
+		const decreaseButton = await screen.findByRole("button", {
+			name: /Diminuir quantidade de /,
+		});
+		fireEvent.click(decreaseButton);
+
+		expect(await screen.findByText("Quantidade: 1")).toBeInTheDocument();
+		expect(
+			await screen.findByRole("button", {
+				name: "Carrinho de compras, 1 item",
+			}),
+		).toBeInTheDocument();
+
+		fireEvent.click(decreaseButton);
+
+		await waitFor(() => {
+			expect(
+				screen.getByRole("button", { name: "Carrinho de compras, vazio" }),
+			).toBeInTheDocument();
+		});
+		expect(screen.getByText("Seu carrinho está vazio.")).toBeInTheDocument();
 	});
 
 	it("toggles the panel on click in touch mode", () => {

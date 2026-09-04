@@ -75,6 +75,33 @@ export function addToCart(
 	];
 }
 
+export function removeFromCart(
+	items: CartLineItem[],
+	productId: string,
+): CartLineItem[] {
+	const existingIndex = items.findIndex((item) => item.productId === productId);
+
+	if (existingIndex < 0) {
+		return items;
+	}
+
+	const existing = items[existingIndex];
+	if (!existing) {
+		return items;
+	}
+
+	if (existing.quantity <= 1) {
+		return items.filter((item) => item.productId !== productId);
+	}
+
+	const updated = [...items];
+	updated[existingIndex] = {
+		...existing,
+		quantity: existing.quantity - 1,
+	};
+	return updated;
+}
+
 export function getCartSummary(items: CartLineItem[]): {
 	itemCount: number;
 	subtotal: number;

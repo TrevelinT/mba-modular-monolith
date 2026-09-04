@@ -4,6 +4,7 @@ import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
 import { subscribeToCart, unsubscribeFromCart } from "../api/cart-pubsub";
 import {
 	getCartItems,
+	removeCartItem,
 	resetCartStore,
 	subscribeToCartStore,
 } from "../api/cart-store";
@@ -13,6 +14,7 @@ import {
 	type CatalogItem,
 	getCartSummary,
 	getCatalogItem,
+	removeFromCart,
 } from "../api/catalog";
 
 const catalogItemFixture: CatalogItem = {
@@ -69,6 +71,47 @@ describe("catalog", () => {
 			itemCount: 2,
 			subtotal: 8199.98,
 		});
+	});
+
+	it("removeFromCart decrements quantity when greater than 1", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 2,
+			},
+			catalogItemFixture,
+		);
+		const updated = removeFromCart(items, CATALOG_PRODUCT_ID);
+
+		expect(updated).toHaveLength(1);
+		expect(updated[0]?.quantity).toBe(1);
+	});
+
+	it("removeFromCart drops the line when quantity is 1", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 1,
+			},
+			catalogItemFixture,
+		);
+		expect(removeFromCart(items, CATALOG_PRODUCT_ID)).toEqual([]);
+	});
+
+	it("removeFromCart is a no-op for unknown productId or empty cart", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 1,
+			},
+			catalogItemFixture,
+		);
+
+		expect(removeFromCart(items, "unknown-product")).toBe(items);
+		expect(removeFromCart([], CATALOG_PRODUCT_ID)).toEqual([]);
 	});
 });
 
@@ -162,6 +205,53 @@ describe("cart store", () => {
 				detail: { productId: "unknown-product", quantity: 1 },
 			}),
 		);
+
+		await waitFor(() => {
+			expect(onStoreChange).not.toHaveBeenCalled();
+		});
+		expect(getCartItems()).toHaveLength(0);
+
+		unsubscribe();
+	});
+
+	it("removeCartItem decrements quantity then drops the line at zero", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		document.dispatchEvent(
+			new CustomEvent(CART_ADD_ITEM_EVENT, {
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 2 },
+			}),
+		);
+
+		await waitFor(() => {
+			expect(getCartItems()[0]?.quantity).toBe(2);
+		});
+
+		onStoreChange.mockClear();
+		removeCartItem(CATALOG_PRODUCT_ID);
+
+		await waitFor(() => {
+			expect(getCartItems()[0]?.quantity).toBe(1);
+		});
+		expect(onStoreChange).toHaveBeenCalled();
+
+		onStoreChange.mockClear();
+		removeCartItem(CATALOG_PRODUCT_ID);
+
+		await waitFor(() => {
+			expect(getCartItems()).toHaveLength(0);
+		});
+		expect(onStoreChange).toHaveBeenCalled();
+
+		unsubscribe();
+	});
+
+	it("removeCartItem is a no-op for unknown productId", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		removeCartItem("unknown-product");
 
 		await waitFor(() => {
 			expect(onStoreChange).not.toHaveBeenCalled();

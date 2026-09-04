@@ -30,6 +30,31 @@ test.describe("Product page", () => {
 		await expect(page.getByText("Quantidade: 2")).toBeVisible();
 	});
 
+	test("decrements quantity and removes item from cart", async ({ page }) => {
+		await page.getByRole("button", { name: "Aumentar quantidade" }).click();
+		await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
+		await expect(
+			page.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
+		).toBeVisible({ timeout: 5000 });
+
+		await page
+			.getByRole("button", { name: /Carrinho de compras, 2 itens/ })
+			.click();
+		await expect(page.getByText("Quantidade: 2")).toBeVisible();
+
+		await page.getByRole("button", { name: /Diminuir quantidade de / }).click();
+		await expect(page.getByText("Quantidade: 1")).toBeVisible();
+		await expect(
+			page.getByRole("button", { name: "Carrinho de compras, 1 item" }),
+		).toBeVisible();
+
+		await page.getByRole("button", { name: /Diminuir quantidade de / }).click();
+		await expect(
+			page.getByRole("button", { name: "Carrinho de compras, vazio" }),
+		).toBeVisible();
+		await expect(page.getByText("Seu carrinho está vazio.")).toBeVisible();
+	});
+
 	test("switches product image via carousel", async ({ page }) => {
 		await page
 			.getByRole("button", {
