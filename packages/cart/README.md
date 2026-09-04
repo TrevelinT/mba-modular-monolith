@@ -6,6 +6,7 @@ Feature package for the **header cart**: line items, totals, and reacting to add
 
 - Cart control in the site header (mounted by the host)
 - Line items with title, quantity, and price after items are added
+- Decrease quantity per line (one unit per click; line removed at zero)
 - Updates when buy-box publishes an add-to-cart command
 
 Catalog entries are simulated for **Nintendo Switch 2** (`CATALOG_PRODUCT_ID`: `nintendo-switch-2`).
@@ -39,8 +40,10 @@ Key `cartAPI` symbols:
 
 - `subscribeToCart(handler)` / `unsubscribeFromCart(handler)` — document event bus
 - `getCartItems()` — current line items (for tests and store bridge)
+- `removeCartItem(productId)` — decrement one unit via store (drops line at zero)
 - `getCatalogItem(productId, options?)` — simulated catalog fetch; default `latencyMs: 300`
 - `addToCart(items, command, catalogItem)` — sync merge (used after catalog resolves)
+- `removeFromCart(items, productId)` — sync decrement-or-drop (pure; no catalog lookup)
 - `CATALOG_PRODUCT_ID`, `CartLineItem`, `CatalogItem`
 
 Example:
@@ -79,11 +82,12 @@ sequenceDiagram
 
 - **On mount:** cart container wires pub/sub and store subscription
 - **On add:** async `getCatalogItem` → sync `addToCart`
+- **On remove:** sync `removeFromCart` via `removeCartItem` (serialized like adds)
 - **Render:** [`cart-view.tsx`](src/components/cart-view.tsx) from store snapshot
 
 ## Simulated backend
 
-Catalog lookup is async (default **300 ms**). The merge function `addToCart` is **synchronous** and does not accept `latencyMs`. Tests use `getCatalogItem(..., { latencyMs: 0 })` and fixture `CatalogItem` values for store/unit tests.
+Catalog lookup is async (default **300 ms**). The merge function `addToCart` and decrement function `removeFromCart` are **synchronous** and do not accept `latencyMs`. Tests use `getCatalogItem(..., { latencyMs: 0 })` and fixture `CatalogItem` values for store/unit tests.
 
 ## Commands
 

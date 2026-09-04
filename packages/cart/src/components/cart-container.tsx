@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { getCartItems, getCartSummary, subscribeToCartStore } from "../api";
+import {
+	getCartItems,
+	getCartSummary,
+	removeCartItem,
+	subscribeToCartStore,
+} from "../api";
 import { CartView } from "./cart-view";
 
 const HOVER_MEDIA_QUERY = "(hover: hover) and (pointer: fine)";
@@ -82,6 +87,10 @@ function CartContainer() {
 		return !open;
 	}
 
+	function handleRemoveItem(productId: string) {
+		removeCartItem(productId);
+	}
+
 	return (
 		<CartView
 			cartAriaLabel={cartAriaLabel}
@@ -93,6 +102,7 @@ function CartContainer() {
 			onButtonClick={handleButtonClick}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
+			onRemoveItem={handleRemoveItem}
 			subtotal={subtotal}
 		/>
 	);

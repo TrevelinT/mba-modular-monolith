@@ -13,6 +13,20 @@ export interface CartViewProps {
 	onMouseEnter: () => void;
 	onMouseLeave: () => void;
 	onButtonClick: () => void;
+	onRemoveItem: (productId: string) => void;
+}
+
+function MinusIcon() {
+	return (
+		<svg
+			aria-hidden="true"
+			className="size-4"
+			fill="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path d="M19 13H5v-2h14v2z" />
+		</svg>
+	);
 }
 
 function ShoppingCartIcon() {
@@ -39,6 +53,7 @@ function CartView({
 	onMouseEnter,
 	onMouseLeave,
 	onButtonClick,
+	onRemoveItem,
 }: CartViewProps) {
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: wrapper spans button and panel for hover
@@ -112,9 +127,19 @@ function CartView({
 											<p className="font-bold text-body-sm line-clamp-1">
 												{item.name}
 											</p>
-											<p className="text-body-sm text-secondary">
-												Quantidade: {item.quantity}
-											</p>
+											<div className="flex items-center gap-2">
+												<p className="text-body-sm text-secondary m-0">
+													Quantidade: {item.quantity}
+												</p>
+												<button
+													aria-label={`Diminuir quantidade de ${item.name}`}
+													className="p-1 rounded hover:bg-surface-container transition-colors cursor-pointer text-secondary hover:text-on-surface"
+													onClick={() => onRemoveItem(item.productId)}
+													type="button"
+												>
+													<MinusIcon />
+												</button>
+											</div>
 										</div>
 										<p className="font-bold text-primary text-body-md">
 											{formatPrice(item.unitPrice * item.quantity)}
