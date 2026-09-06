@@ -27,10 +27,12 @@ test.describe("Product page", () => {
 		await expect(
 			page.getByRole("heading", { name: "Seu carrinho" }),
 		).toBeVisible();
-		await expect(page.getByText("Quantidade: 2")).toBeVisible();
+		await expect(
+			page.getByLabel("Pré-visualização do carrinho").getByRole("status"),
+		).toHaveText("2");
 	});
 
-	test("decrements quantity and removes item from cart", async ({ page }) => {
+	test("edits quantity and deletes item from cart", async ({ page }) => {
 		await page.getByRole("button", { name: "Aumentar quantidade" }).click();
 		await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
 		await expect(
@@ -40,15 +42,25 @@ test.describe("Product page", () => {
 		await page
 			.getByRole("button", { name: /Carrinho de compras, 2 itens/ })
 			.click();
-		await expect(page.getByText("Quantidade: 2")).toBeVisible();
+		const cartPanel = page.getByLabel("Pré-visualização do carrinho");
+		await expect(cartPanel.getByRole("status")).toHaveText("2");
 
-		await page.getByRole("button", { name: /Diminuir quantidade de / }).click();
-		await expect(page.getByText("Quantidade: 1")).toBeVisible();
+		await page.getByRole("button", { name: /Aumentar quantidade de / }).click();
+		await expect(cartPanel.getByRole("status")).toHaveText("3");
 		await expect(
-			page.getByRole("button", { name: "Carrinho de compras, 1 item" }),
+			page.getByRole("button", { name: "Carrinho de compras, 3 itens" }),
 		).toBeVisible();
 
 		await page.getByRole("button", { name: /Diminuir quantidade de / }).click();
+		await expect(cartPanel.getByRole("status")).toHaveText("2");
+
+		await page.getByRole("button", { name: /Diminuir quantidade de / }).click();
+		await expect(cartPanel.getByRole("status")).toHaveText("1");
+		await expect(
+			page.getByRole("button", { name: /Diminuir quantidade de / }),
+		).toBeDisabled();
+
+		await page.getByRole("button", { name: /Remover .+ do carrinho/ }).click();
 		await expect(
 			page.getByRole("button", { name: "Carrinho de compras, vazio" }),
 		).toBeVisible();

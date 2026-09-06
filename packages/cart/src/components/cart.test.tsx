@@ -93,19 +93,49 @@ describe("Cart", () => {
 			);
 		});
 
-		expect(
-			await screen.findByRole("button", {
-				name: "Carrinho de compras, 2 itens",
-			}),
-		).toBeInTheDocument();
-		expect(screen.getByText("Quantidade: 2")).toBeInTheDocument();
+		const cartButton = await screen.findByRole("button", {
+			name: "Carrinho de compras, 2 itens",
+		});
+		fireEvent.click(cartButton);
+
+		expect(screen.getByRole("status")).toHaveTextContent("2");
 		const lineTotal = formatPrice(4099.99 * 2);
 		expect(
 			screen.getAllByText((_, element) => element?.textContent === lineTotal),
 		).toHaveLength(2);
 	});
 
-	it("decrements quantity and removes the line when reaching zero", async () => {
+	it("increases quantity from the cart stepper", async () => {
+		mockMatchMedia(false);
+		render(<CartContainer />);
+
+		act(function dispatchAddToCart() {
+			document.dispatchEvent(
+				new CustomEvent(CART_ADD_ITEM_EVENT, {
+					detail: { productId: CATALOG_PRODUCT_ID, quantity: 1 },
+				}),
+			);
+		});
+
+		const cartButton = await screen.findByRole("button", {
+			name: "Carrinho de compras, 1 item",
+		});
+		fireEvent.click(cartButton);
+
+		const increaseButton = await screen.findByRole("button", {
+			name: /Aumentar quantidade de /,
+		});
+		fireEvent.click(increaseButton);
+
+		expect(await screen.findByRole("status")).toHaveTextContent("2");
+		expect(
+			await screen.findByRole("button", {
+				name: "Carrinho de compras, 2 itens",
+			}),
+		).toBeInTheDocument();
+	});
+
+	it("decrements quantity but keeps the line at quantity 1", async () => {
 		mockMatchMedia(false);
 		render(<CartContainer />);
 
@@ -127,14 +157,45 @@ describe("Cart", () => {
 		});
 		fireEvent.click(decreaseButton);
 
-		expect(await screen.findByText("Quantidade: 1")).toBeInTheDocument();
+		expect(await screen.findByRole("status")).toHaveTextContent("1");
 		expect(
 			await screen.findByRole("button", {
 				name: "Carrinho de compras, 1 item",
 			}),
 		).toBeInTheDocument();
+		expect(decreaseButton).toBeDisabled();
 
 		fireEvent.click(decreaseButton);
+
+		expect(screen.getByRole("status")).toHaveTextContent("1");
+		expect(
+			screen.getByRole("button", {
+				name: "Carrinho de compras, 1 item",
+			}),
+		).toBeInTheDocument();
+	});
+
+	it("removes the line when deleting via trash button", async () => {
+		mockMatchMedia(false);
+		render(<CartContainer />);
+
+		act(function dispatchAddToCart() {
+			document.dispatchEvent(
+				new CustomEvent(CART_ADD_ITEM_EVENT, {
+					detail: { productId: CATALOG_PRODUCT_ID, quantity: 2 },
+				}),
+			);
+		});
+
+		const cartButton = await screen.findByRole("button", {
+			name: "Carrinho de compras, 2 itens",
+		});
+		fireEvent.click(cartButton);
+
+		const deleteButton = await screen.findByRole("button", {
+			name: /Remover .+ do carrinho/,
+		});
+		fireEvent.click(deleteButton);
 
 		await waitFor(() => {
 			expect(

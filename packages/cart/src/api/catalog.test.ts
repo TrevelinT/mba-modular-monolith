@@ -3,7 +3,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { CART_ADD_ITEM_EVENT } from "../api/cart-events";
 import { subscribeToCart, unsubscribeFromCart } from "../api/cart-pubsub";
 import {
+	deleteCartItem,
 	getCartItems,
+	increaseCartItem,
 	removeCartItem,
 	resetCartStore,
 	subscribeToCartStore,
@@ -12,8 +14,10 @@ import {
 	addToCart,
 	CATALOG_PRODUCT_ID,
 	type CatalogItem,
+	deleteFromCart,
 	getCartSummary,
 	getCatalogItem,
+	increaseInCart,
 	removeFromCart,
 } from "../api/catalog";
 
@@ -88,7 +92,7 @@ describe("catalog", () => {
 		expect(updated[0]?.quantity).toBe(1);
 	});
 
-	it("removeFromCart drops the line when quantity is 1", () => {
+	it("removeFromCart is a no-op when quantity is 1", () => {
 		const items = addToCart(
 			[],
 			{
@@ -97,7 +101,7 @@ describe("catalog", () => {
 			},
 			catalogItemFixture,
 		);
-		expect(removeFromCart(items, CATALOG_PRODUCT_ID)).toEqual([]);
+		expect(removeFromCart(items, CATALOG_PRODUCT_ID)).toBe(items);
 	});
 
 	it("removeFromCart is a no-op for unknown productId or empty cart", () => {
@@ -112,6 +116,59 @@ describe("catalog", () => {
 
 		expect(removeFromCart(items, "unknown-product")).toBe(items);
 		expect(removeFromCart([], CATALOG_PRODUCT_ID)).toEqual([]);
+	});
+
+	it("increaseInCart increments quantity when the line exists", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 1,
+			},
+			catalogItemFixture,
+		);
+		const updated = increaseInCart(items, CATALOG_PRODUCT_ID);
+
+		expect(updated).toHaveLength(1);
+		expect(updated[0]?.quantity).toBe(2);
+	});
+
+	it("increaseInCart is a no-op for unknown productId or empty cart", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 1,
+			},
+			catalogItemFixture,
+		);
+
+		expect(increaseInCart(items, "unknown-product")).toBe(items);
+		expect(increaseInCart([], CATALOG_PRODUCT_ID)).toEqual([]);
+	});
+
+	it("deleteFromCart removes the line regardless of quantity", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 3,
+			},
+			catalogItemFixture,
+		);
+		expect(deleteFromCart(items, CATALOG_PRODUCT_ID)).toEqual([]);
+	});
+
+	it("deleteFromCart is a no-op for unknown productId", () => {
+		const items = addToCart(
+			[],
+			{
+				productId: CATALOG_PRODUCT_ID,
+				quantity: 1,
+			},
+			catalogItemFixture,
+		);
+		expect(deleteFromCart(items, "unknown-product")).toEqual(items);
 	});
 });
 
@@ -214,7 +271,7 @@ describe("cart store", () => {
 		unsubscribe();
 	});
 
-	it("removeCartItem decrements quantity then drops the line at zero", async () => {
+	it("removeCartItem decrements quantity and floors at 1", async () => {
 		const onStoreChange = vi.fn();
 		const unsubscribe = subscribeToCartStore(onStoreChange);
 
@@ -240,9 +297,9 @@ describe("cart store", () => {
 		removeCartItem(CATALOG_PRODUCT_ID);
 
 		await waitFor(() => {
-			expect(getCartItems()).toHaveLength(0);
+			expect(getCartItems()[0]?.quantity).toBe(1);
 		});
-		expect(onStoreChange).toHaveBeenCalled();
+		expect(getCartItems()).toHaveLength(1);
 
 		unsubscribe();
 	});
@@ -252,6 +309,84 @@ describe("cart store", () => {
 		const unsubscribe = subscribeToCartStore(onStoreChange);
 
 		removeCartItem("unknown-product");
+
+		await waitFor(() => {
+			expect(onStoreChange).not.toHaveBeenCalled();
+		});
+		expect(getCartItems()).toHaveLength(0);
+
+		unsubscribe();
+	});
+
+	it("increaseCartItem increments quantity", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		document.dispatchEvent(
+			new CustomEvent(CART_ADD_ITEM_EVENT, {
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 1 },
+			}),
+		);
+
+		await waitFor(() => {
+			expect(getCartItems()[0]?.quantity).toBe(1);
+		});
+
+		onStoreChange.mockClear();
+		increaseCartItem(CATALOG_PRODUCT_ID);
+
+		await waitFor(() => {
+			expect(getCartItems()[0]?.quantity).toBe(2);
+		});
+		expect(onStoreChange).toHaveBeenCalled();
+
+		unsubscribe();
+	});
+
+	it("increaseCartItem is a no-op for unknown productId", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		increaseCartItem("unknown-product");
+
+		await waitFor(() => {
+			expect(onStoreChange).not.toHaveBeenCalled();
+		});
+		expect(getCartItems()).toHaveLength(0);
+
+		unsubscribe();
+	});
+
+	it("deleteCartItem removes the line", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		document.dispatchEvent(
+			new CustomEvent(CART_ADD_ITEM_EVENT, {
+				detail: { productId: CATALOG_PRODUCT_ID, quantity: 3 },
+			}),
+		);
+
+		await waitFor(() => {
+			expect(getCartItems()[0]?.quantity).toBe(3);
+		});
+
+		onStoreChange.mockClear();
+		deleteCartItem(CATALOG_PRODUCT_ID);
+
+		await waitFor(() => {
+			expect(getCartItems()).toHaveLength(0);
+		});
+		expect(onStoreChange).toHaveBeenCalled();
+
+		unsubscribe();
+	});
+
+	it("deleteCartItem is a no-op for unknown productId", async () => {
+		const onStoreChange = vi.fn();
+		const unsubscribe = subscribeToCartStore(onStoreChange);
+
+		deleteCartItem("unknown-product");
 
 		await waitFor(() => {
 			expect(onStoreChange).not.toHaveBeenCalled();

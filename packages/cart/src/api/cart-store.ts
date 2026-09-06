@@ -3,7 +3,9 @@ import { subscribeToCart, unsubscribeFromCart } from "./cart-pubsub";
 import {
 	addToCart,
 	type CartLineItem,
+	deleteFromCart,
 	getCatalogItem,
+	increaseInCart,
 	removeFromCart,
 } from "./catalog";
 
@@ -33,6 +35,28 @@ export function removeCartItem(productId: string): void {
 			return;
 		}
 		items = removeFromCart(items, productId);
+		notifyStoreListeners();
+	});
+}
+
+export function increaseCartItem(productId: string): void {
+	mutationChain = mutationChain.then(function applyIncreaseInCart() {
+		const lineExists = items.some((item) => item.productId === productId);
+		if (!lineExists) {
+			return;
+		}
+		items = increaseInCart(items, productId);
+		notifyStoreListeners();
+	});
+}
+
+export function deleteCartItem(productId: string): void {
+	mutationChain = mutationChain.then(function applyDeleteFromCart() {
+		const lineExists = items.some((item) => item.productId === productId);
+		if (!lineExists) {
+			return;
+		}
+		items = deleteFromCart(items, productId);
 		notifyStoreListeners();
 	});
 }

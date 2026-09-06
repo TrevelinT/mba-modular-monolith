@@ -3,4 +3,4 @@
 "web": minor
 ---
 
-Add feature to remove product to cart
+Add editable cart quantity stepper and trash delete

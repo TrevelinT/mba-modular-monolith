@@ -86,12 +86,8 @@ export function removeFromCart(
 	}
 
 	const existing = items[existingIndex];
-	if (!existing) {
+	if (!existing || existing.quantity <= 1) {
 		return items;
-	}
-
-	if (existing.quantity <= 1) {
-		return items.filter((item) => item.productId !== productId);
 	}
 
 	const updated = [...items];
@@ -100,6 +96,36 @@ export function removeFromCart(
 		quantity: existing.quantity - 1,
 	};
 	return updated;
+}
+
+export function increaseInCart(
+	items: CartLineItem[],
+	productId: string,
+): CartLineItem[] {
+	const existingIndex = items.findIndex((item) => item.productId === productId);
+
+	if (existingIndex < 0) {
+		return items;
+	}
+
+	const existing = items[existingIndex];
+	if (!existing) {
+		return items;
+	}
+
+	const updated = [...items];
+	updated[existingIndex] = {
+		...existing,
+		quantity: existing.quantity + 1,
+	};
+	return updated;
+}
+
+export function deleteFromCart(
+	items: CartLineItem[],
+	productId: string,
+): CartLineItem[] {
+	return items.filter((item) => item.productId !== productId);
 }
 
 export function getCartSummary(items: CartLineItem[]): {

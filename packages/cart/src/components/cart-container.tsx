@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
+	deleteCartItem,
 	getCartItems,
 	getCartSummary,
+	increaseCartItem,
 	removeCartItem,
 	subscribeToCartStore,
 } from "../api";
@@ -91,6 +93,14 @@ function CartContainer() {
 		removeCartItem(productId);
 	}
 
+	function handleIncreaseItem(productId: string) {
+		increaseCartItem(productId);
+	}
+
+	function handleDeleteItem(productId: string) {
+		deleteCartItem(productId);
+	}
+
 	return (
 		<CartView
 			cartAriaLabel={cartAriaLabel}
@@ -100,6 +110,8 @@ function CartContainer() {
 			itemCount={itemCount}
 			items={items}
 			onButtonClick={handleButtonClick}
+			onDeleteItem={handleDeleteItem}
+			onIncreaseItem={handleIncreaseItem}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
 			onRemoveItem={handleRemoveItem}

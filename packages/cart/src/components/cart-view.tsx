@@ -14,6 +14,8 @@ export interface CartViewProps {
 	onMouseLeave: () => void;
 	onButtonClick: () => void;
 	onRemoveItem: (productId: string) => void;
+	onIncreaseItem: (productId: string) => void;
+	onDeleteItem: (productId: string) => void;
 }
 
 function MinusIcon() {
@@ -25,6 +27,32 @@ function MinusIcon() {
 			viewBox="0 0 24 24"
 		>
 			<path d="M19 13H5v-2h14v2z" />
+		</svg>
+	);
+}
+
+function PlusIcon() {
+	return (
+		<svg
+			aria-hidden="true"
+			className="size-4"
+			fill="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+		</svg>
+	);
+}
+
+function TrashIcon() {
+	return (
+		<svg
+			aria-hidden="true"
+			className="size-4"
+			fill="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
 		</svg>
 	);
 }
@@ -54,6 +82,8 @@ function CartView({
 	onMouseLeave,
 	onButtonClick,
 	onRemoveItem,
+	onIncreaseItem,
+	onDeleteItem,
 }: CartViewProps) {
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: wrapper spans button and panel for hover
@@ -127,17 +157,40 @@ function CartView({
 											<p className="font-bold text-body-sm line-clamp-1">
 												{item.name}
 											</p>
-											<div className="flex items-center gap-2">
-												<p className="text-body-sm text-secondary m-0">
-													Quantidade: {item.quantity}
-												</p>
+											<div className="flex items-center gap-2 mt-1">
+												<div className="flex items-center border border-outline-variant rounded">
+													<button
+														aria-label={`Diminuir quantidade de ${item.name}`}
+														className="p-1 hover:bg-surface-container transition-colors cursor-pointer text-secondary hover:text-on-surface disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-secondary"
+														disabled={item.quantity === 1}
+														onClick={() => onRemoveItem(item.productId)}
+														type="button"
+													>
+														<MinusIcon />
+													</button>
+													<span
+														aria-live="polite"
+														className="min-w-6 text-center text-body-sm font-bold"
+														role="status"
+													>
+														{item.quantity}
+													</span>
+													<button
+														aria-label={`Aumentar quantidade de ${item.name}`}
+														className="p-1 hover:bg-surface-container transition-colors cursor-pointer text-secondary hover:text-on-surface"
+														onClick={() => onIncreaseItem(item.productId)}
+														type="button"
+													>
+														<PlusIcon />
+													</button>
+												</div>
 												<button
-													aria-label={`Diminuir quantidade de ${item.name}`}
+													aria-label={`Remover ${item.name} do carrinho`}
 													className="p-1 rounded hover:bg-surface-container transition-colors cursor-pointer text-secondary hover:text-on-surface"
-													onClick={() => onRemoveItem(item.productId)}
+													onClick={() => onDeleteItem(item.productId)}
 													type="button"
 												>
-													<MinusIcon />
+													<TrashIcon />
 												</button>
 											</div>
 										</div>
