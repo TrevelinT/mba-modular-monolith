@@ -91,7 +91,7 @@ jobs:
             fi
           done
           if [ "$found" -eq 1 ]; then
-            node scripts/merge-coverage.mjs
+            npm run merge-coverage
             npm run report-coverage
           else
             echo "No package coverage reports found; skipping merge/report."

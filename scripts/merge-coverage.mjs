@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import path from "node:path";
 
@@ -36,7 +36,18 @@ if (copied === 0) {
 	process.exit(0);
 }
 
+const nycBin = path.join(process.cwd(), "node_modules/nyc/bin/nyc.js");
+
+if (!existsSync(nycBin)) {
+	console.error(`nyc not found at ${nycBin}. Install dependencies first.`);
+	process.exit(1);
+}
+
 mkdirSync(mergedDir, { recursive: true });
-execSync(`nyc merge ${rawDir} ${path.join(mergedDir, "coverage.json")}`, {
-	stdio: "inherit",
-});
+execFileSync(
+	process.execPath,
+	[nycBin, "merge", rawDir, path.join(mergedDir, "coverage.json")],
+	{
+		stdio: "inherit",
+	},
+);
