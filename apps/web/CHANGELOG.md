@@ -1,5 +1,12 @@
 # web
 
+## 1.0.1
+
+### Patch Changes
+
+- [#6](https://github.com/TrevelinT/mba-modular-monolith/pull/6) [`acaf699`](https://github.com/TrevelinT/mba-modular-monolith/commit/acaf699df9d24764c89f8fe889a0da03ed3d6e30) Thanks [@TrevelinT](https://github.com/TrevelinT)! - Run CI only on affected packages
+  Fix failing Version Packages CI
+
 ## 1.0.0
 
 ### Major Changes
