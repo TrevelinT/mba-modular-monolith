@@ -1,5 +1,11 @@
 # @repo/cart
 
+## 1.1.0
+
+### Minor Changes
+
+- [#5](https://github.com/TrevelinT/mba-modular-monolith/pull/5) [`0c18ffc`](https://github.com/TrevelinT/mba-modular-monolith/commit/0c18ffc42be17c56ad1be42d74c8479af3eb83ba) Thanks [@TrevelinT](https://github.com/TrevelinT)! - Add editable cart quantity stepper and trash delete
+
 ## 1.0.0
 
 ### Major Changes
