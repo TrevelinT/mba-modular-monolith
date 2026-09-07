@@ -111,11 +111,11 @@ Open the dev URL printed by Vite (typically `http://localhost:5173`).
 
 ## CI
 
-[GitHub Actions](https://docs.github.com/en/actions) ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main`, on pull request open/sync, and on demand via **Run workflow** (`workflow_dispatch`) for manual metric collection (pick a branch; the run uses that branch’s tip).
+[GitHub Actions](https://docs.github.com/en/actions) ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main`, on pull request open/sync, and on demand via **Run workflow** (`workflow_dispatch`) for manual metric collection (pick a branch; the run uses that branch’s tip). For `workflow_dispatch`, Turbo `--affected` compares against the previous `v*` tag (release window), not `HEAD^` — so a tip that is a Version Packages / release tag still includes the real code delta since the last release.
 
 | Job | What runs |
 |-----|-----------|
-| **Build and Quality** | `format-and-lint` → `build` → artifact report → upload `web-dist` → `type-check` → `test-coverage` |
+| **Build and Quality** | Full-repo `format-and-lint` (Biome) → full-repo `build` → artifact report → upload `web-dist` → `turbo run type-check --affected` → `turbo run test --affected` (merge/report coverage when any package produced a report) |
 | **E2E Tests** | `needs: build` → download `web-dist` → Playwright → `test:e2e --workspace=web` |
 
 E2E setup, preview server, and visual snapshots: [`apps/web/README.md`](apps/web/README.md).

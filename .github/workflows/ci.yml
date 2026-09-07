@@ -21,8 +21,30 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          filter: blob:none
           persist-credentials: false
+
+      - name: Resolve Turbo SCM range
+        run: |
+          echo "TURBO_SCM_HEAD=${GITHUB_SHA}" >> "$GITHUB_ENV"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "TURBO_SCM_BASE=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            echo "TURBO_SCM_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Release window: previous v* tag (HEAD^ so a tag on HEAD is skipped)
+            if PREV_TAG=$(git describe --tags --match 'v*' --abbrev=0 HEAD^ 2>/dev/null); then
+              echo "TURBO_SCM_BASE=$(git rev-parse "$PREV_TAG")" >> "$GITHUB_ENV"
+              echo "workflow_dispatch base: $PREV_TAG"
+            else
+              echo "TURBO_SCM_BASE=$(git rev-parse HEAD^)" >> "$GITHUB_ENV"
+              echo "workflow_dispatch base: HEAD^ (no previous v* tag)"
+            fi
+          else
+            # push with empty/zero before (new branch)
+            echo "TURBO_SCM_BASE=$(git rev-parse HEAD^)" >> "$GITHUB_ENV"
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -50,10 +72,30 @@ jobs:
           if-no-files-found: error
 
       - name: Type check
-        run: npm run type-check
+        run: npx turbo run type-check --affected
 
       - name: Test
-        run: npm run test-coverage
+        run: |
+          npx turbo run test --affected
+          coverage_files=(
+            apps/web/coverage/coverage-final.json
+            packages/cart/coverage/coverage-final.json
+            packages/buy-box/coverage/coverage-final.json
+            packages/product/coverage/coverage-final.json
+          )
+          found=0
+          for f in "${coverage_files[@]}"; do
+            if [ -f "$f" ]; then
+              found=1
+              break
+            fi
+          done
+          if [ "$found" -eq 1 ]; then
+            node scripts/merge-coverage.mjs
+            npm run report-coverage
+          else
+            echo "No package coverage reports found; skipping merge/report."
+          fi
 
   e2e:
     name: E2E Tests
